@@ -1,0 +1,9 @@
+{
+    "Class Comment":{
+        "prefix": "DT:clsComment",
+        "body": [
+            "class name: ",
+        ],
+        "description": "This a apex class level comment"
+    }
+}

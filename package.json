@@ -1,0 +1,82 @@
+{
+  "name": "sfdevtools",
+  "displayName": "Salesforce Dev Tools",
+  "description": "Some useful handy tools for salesforce developers.",
+  "version": "0.0.6",
+  "publisher": "Nagarjuna",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swdcworld/sfdevtools"
+  },
+  "bugs": {
+    "url": "https://github.com/swdcworld/sfdevtools/issues"
+  },
+  "homepage": "https://github.com/swdcworld/sfdevtools/blob/main/README.md",
+  "icon": "images/sfDevTools.png",
+  "galleryBanner": {
+    "color": "#fff",
+    "theme": "light"
+  },
+  "engines": {
+    "vscode": "^1.0.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "Salesforce",
+    "Dev Tools",
+    "SF Tools"
+  ],
+  "activationEvents": [
+    "onCommand:sfdevtools.deployFile",
+    "onCommand:sfdevtools.retrieveFile"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "sfdevtools.deployFile",
+        "title": "DT: Deploy current file"
+      },
+      {
+        "command": "sfdevtools.retrieveFile",
+        "title": "DT: Retrieve current file"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "sfdevtools.deployFile",
+        "key": "Ctrl+Shift+D",
+        "mac": "Cmd+Shift+D"
+      },
+      {
+        "command": "sfdevtools.retrieveFile",
+        "key": "Ctrl+Shift+R",
+        "mac": "Cmd+Shift+R"
+      }
+    ],
+    "snippets": [
+      {
+          "language": "apex",
+          "path": "./snippets/apex.code-snippets"
+      }
+  ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.0.0",
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "14.x",
+    "eslint": "^8.9.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.2.1",
+    "typescript": "^4.5.5",
+    "@vscode/test-electron": "^2.1.2"
+  }
+}
