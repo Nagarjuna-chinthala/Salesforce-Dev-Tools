@@ -2,16 +2,17 @@
   "name": "sfdevtools",
   "displayName": "Salesforce Dev Tools",
   "description": "Some useful handy tools for salesforce developers.",
-  "version": "0.0.6",
+  "version": "0.0.7",
+  "license": "MIT",
   "publisher": "Nagarjuna",
   "repository": {
     "type": "git",
-    "url": "https://github.com/swdcworld/sfdevtools"
+    "url": "https://github.com/Nagarjuna-chinthala/Salesforce-Dev-Tools"
   },
   "bugs": {
-    "url": "https://github.com/swdcworld/sfdevtools/issues"
+    "url": "https://github.com/Nagarjuna-chinthala/Salesforce-Dev-Tools/issues"
   },
-  "homepage": "https://github.com/swdcworld/sfdevtools/blob/main/README.md",
+  "homepage": "https://github.com/Nagarjuna-chinthala/Salesforce-Dev-Tools/blob/main/README.md",
   "icon": "images/sfDevTools.png",
   "galleryBanner": {
     "color": "#fff",
@@ -35,33 +36,55 @@
   "main": "./extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "sfdevtools.deployFile",
-        "title": "DT: Deploy current file"
-      },
-      {
-        "command": "sfdevtools.retrieveFile",
-        "title": "DT: Retrieve current file"
-      }
+        {
+            "command": "sfdevtools.deployFile",
+            "title": "DT: Deploy Current File"
+        },
+        {
+            "command": "sfdevtools.retrieveFile",
+            "title": "DT: Retrieve Current File"
+        }
     ],
+    "menus": {
+        "editor/context": [
+            {
+                "command": "sfdevtools.deployFile",
+                "group": "DeployRetrieveCmds@1"
+            },
+            {
+                "command": "sfdevtools.retrieveFile",
+                "group": "DeployRetrieveCmds@1"
+            }
+        ],
+        "explorer/context": [
+            {
+                "command": "sfdevtools.deployFile",
+                "group": "DeployRetrieveCmds@1"
+            },
+            {
+                "command": "sfdevtools.retrieveFile",
+                "group": "DeployRetrieveCmds@1"
+            }
+        ]
+    },
     "keybindings": [
-      {
-        "command": "sfdevtools.deployFile",
-        "key": "Ctrl+Shift+D",
-        "mac": "Cmd+Shift+D"
-      },
-      {
-        "command": "sfdevtools.retrieveFile",
-        "key": "Ctrl+Shift+R",
-        "mac": "Cmd+Shift+R"
-      }
+        {
+            "command": "sfdevtools.deployFile",
+            "key": "Ctrl+Shift+D",
+            "mac": "Cmd+Shift+D"
+        },
+        {
+            "command": "sfdevtools.retrieveFile",
+            "key": "Ctrl+Shift+R",
+            "mac": "Cmd+Shift+R"
+        }
     ],
     "snippets": [
-      {
-          "language": "apex",
-          "path": "./snippets/apex.code-snippets"
-      }
-  ]
+        {
+            "language": "apex",
+            "path": "./snippets/apex.code-snippets"
+        }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
