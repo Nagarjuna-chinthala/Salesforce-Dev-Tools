@@ -14,4 +14,4 @@ Salesforce doesn't provide right click menu to show deploy/retrieve for scratch 
 2. Key bindings:
     *Deploy current file*: press **Ctrl+Shift+D** on Windows or Linux, or Cmd+Shift+D on macOS
     *Retrieve current file*: press **Ctrl+Shift+R** on Windows or Linux, or Cmd+Shift+R on macOS
-
+3. Open any file and right click on editor/ sidebar explorer, it will display option to retrieve/ deploy current file.

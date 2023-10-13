@@ -16,3 +16,7 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.0.6] - 28-03-2022
 - Added key bindings for commands 
+
+## [0.0.7] - 13-10-2023
+- Added editor windows context menu option to deploy/ retrieve
+- Added explorer windows context menu option to deploy/ retrieve
