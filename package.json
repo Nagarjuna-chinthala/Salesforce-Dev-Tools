@@ -48,20 +48,24 @@
     "menus": {
         "editor/context": [
             {
+                "when": "config.salesforceDevTools.editor.hideOptions == false",
                 "command": "sfdevtools.deployFile",
                 "group": "DeployRetrieveCmds@1"
             },
             {
+                "when": "config.salesforceDevTools.editor.hideOptions == false",
                 "command": "sfdevtools.retrieveFile",
                 "group": "DeployRetrieveCmds@1"
             }
         ],
         "explorer/context": [
             {
+                "when": "config.salesforceDevTools.explorer.hideOptions == false",
                 "command": "sfdevtools.deployFile",
                 "group": "DeployRetrieveCmds@1"
             },
             {
+                "when": "config.salesforceDevTools.explorer.hideOptions == false",
                 "command": "sfdevtools.retrieveFile",
                 "group": "DeployRetrieveCmds@1"
             }
@@ -83,6 +87,25 @@
         {
             "language": "apex",
             "path": "./snippets/apex.code-snippets"
+        }
+    ],
+    "configuration": [
+        {
+            "title": "Salesforce Dev Tools",
+            "properties": {
+                "salesforceDevTools.editor.hideOptions": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Enable/Disable Editor rigth click deploy/retrieve options",
+                    "scope": "Content"
+                },
+                "salesforceDevTools.explorer.hideOptions": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Enable/Disable Explorer rigth click deploy/retrieve options",
+                    "scope": "Content"
+                }
+            }
         }
     ]
   },
