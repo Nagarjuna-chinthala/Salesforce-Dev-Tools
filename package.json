@@ -31,7 +31,9 @@
   ],
   "activationEvents": [
     "onCommand:sfdevtools.deployFile",
-    "onCommand:sfdevtools.retrieveFile"
+    "onCommand:sfdevtools.retrieveFile",
+    "onCommand:sfdevtools.changeWorkspaceColor",
+    "onCommand:sfdevtools.changeWorkspaceColorDefault"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -43,6 +45,14 @@
         {
             "command": "sfdevtools.retrieveFile",
             "title": "DT: Retrieve Current File"
+        },
+        {
+            "command": "sfdevtools.changeWorkspaceColor",
+            "title": "DT: Change Org Workspace Color"
+        },
+        {
+            "command": "sfdevtools.changeWorkspaceColorDefault",
+            "title": "DT: Reset Org Workspace Color to Default"
         }
     ],
     "menus": {
