@@ -1,0 +1,30 @@
+{
+    "lwc-button": {
+        "prefix": "sdt-button",
+        "body": [
+            "<lightning-button variant=\"${1|base, Neutral, brand, brand-outline, destructive, destructive-text, success|}\" label=\"${2: label}\" title=\"${2: title}\" onclick={${handleOnclick}}></lightning-button>"
+            ],
+        "description": "lightning button"
+    },
+    "slds-center": {
+        "prefix": ["sdt-center", "center"],
+        "body": [
+            "slds-align_absolute-center"
+            ],
+        "description": "slds Absolute Center"
+    },
+    "slds-margin": {
+        "prefix": ["sdt-margin", "margin"],
+        "body": [
+            "slds-m-${1|top,left,right,bottom,horizontal,vertical,around|}_${2|none,xxx-small,xx-small,x-small,small,medium,large,x-large,xx-large|}"
+            ],
+        "description": "slds margin"
+    },
+    "slds-padding": {
+        "prefix": ["sdt-padding", "padding"],
+        "body": [
+            "slds-p-${1|top,left,right,bottom,horizontal,vertical,around|}_${2|none,xxx-small,xx-small,x-small,small,medium,large,x-large,xx-large|}"
+            ],
+        "description": "slds padding"
+    }
+}

@@ -3,6 +3,7 @@
 const vscode = require('vscode');
 var orgDeployRetrieve = require('./src/orgDeployRetrieve');
 var orgWorkspaceColor = require('./src/orgWorkspaceColor');
+var lwcHtmlMarkup = require('./src/lwcHtmlMarkup');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -32,7 +33,18 @@ function activate(context) {
 		orgWorkspaceColor.changeWorkspaceColorToDefault();
     });
 
-	context.subscriptions.push(deployDisposable, retrieveDisposable, changeWorkspaceColor, changeWorkspaceColorToDefault);
+	// reset workspace color
+    let insertLightningMarkup = vscode.commands.registerCommand('sfdevtools.insertLightningMarkup', function () {
+		lwcHtmlMarkup.selectMarkup();
+    });
+
+	context.subscriptions.push(
+		deployDisposable, 
+		retrieveDisposable, 
+		changeWorkspaceColor, 
+		changeWorkspaceColorToDefault,
+		insertLightningMarkup
+	);
 }
 
 // this method is called when your extension is deactivated
