@@ -4,27 +4,118 @@
         "body": [
             "<lightning-button variant=\"${1|base, Neutral, brand, brand-outline, destructive, destructive-text, success|}\" label=\"${2: label}\" title=\"${2: title}\" onclick={${handleOnclick}}></lightning-button>"
             ],
-        "description": "lightning button"
+        "description": "Add lwc button"
     },
-    "slds-center": {
-        "prefix": ["sdt-center", "center"],
+    "slds-alignment": {
+        "prefix": ["sdt-center", "alignment"],
         "body": [
             "slds-align_absolute-center"
             ],
-        "description": "slds Absolute Center"
+        "description": "Add Absolute Center to your elements"
+    },
+    "slds-borders": {
+        "prefix": ["sdt-border", "border"],
+        "body": [
+            "slds-border_${1|top,left,right,bottom|}"
+            ],
+        "description": "Add borders to your elements"
+    },
+    "slds-box": {
+        "prefix": ["sdt-box", "box"],
+        "body": [
+            "slds-box"
+            ],
+        "description": "Add box to your elements"
+    },
+    "slds-float": {
+        "prefix": ["sdt-float", "float"],
+        "body": [
+            "slds-float_${1|none,left,right|}"
+            ],
+        "description": "Add Floats to your elements"
+    },
+    "slds-line clamp": {
+        "prefix": ["sdt-line clamp", "line clamp"],
+        "body": [
+            "slds-line-clamp_${1|x-small,small,medium,large|}"
+            ],
+        "description": "Add Line Clamp to your elements"
     },
     "slds-margin": {
         "prefix": ["sdt-margin", "margin"],
         "body": [
             "slds-m-${1|top,left,right,bottom,horizontal,vertical,around|}_${2|none,xxx-small,xx-small,x-small,small,medium,large,x-large,xx-large|}"
             ],
-        "description": "slds margin"
+        "description": "Add margin to your elements"
     },
     "slds-padding": {
         "prefix": ["sdt-padding", "padding"],
         "body": [
             "slds-p-${1|top,left,right,bottom,horizontal,vertical,around|}_${2|none,xxx-small,xx-small,x-small,small,medium,large,x-large,xx-large|}"
             ],
-        "description": "slds padding"
+        "description": "Add padding to your elements"
+    },
+    "slds-Position": {
+        "prefix": ["sdt-position", "position"],
+        "body": [
+            "slds-is-${1|fixed,absolute,relative,static|}"
+            ],
+        "description": "Add Position to your elements"
+    },
+    "slds-Print": {
+        "prefix": ["sdt-print", "print"],
+        "body": [
+            "slds-no-print"
+            ],
+        "description": "Add Print to your elements"
+    },
+    "slds-size": {
+        "prefix": ["sdt-size", "size"],
+        "body": [
+            "slds-size_${1|1,2,3,4,5,6|}-of-${2|1,2,3,4,5,6|}"
+            ],
+        "description": "Add size to your elements"
+    },
+    "slds-Text heading": {
+        "prefix": ["sdt-text heading", "text heading"],
+        "body": [
+            "slds-text-heading_${1|small,medium,large|}"
+            ],
+        "description": "Add Text heading to your elements"
+    },
+    "slds-Text Align": {
+        "prefix": ["sdt-text align", "text align"],
+        "body": [
+            "slds-text-align_${1|left,right,center|}"
+            ],
+        "description": "Add Text Alignment to your elements"
+    },
+    "slds-Text Color": {
+        "prefix": ["sdt-text color", "text color"],
+        "body": [
+            "slds-text-color_${1|default,success,weak,error,destructive,inverse,inverse-weak|}"
+            ],
+        "description": "Add Text Color to your elements"
+    },
+    "slds-Themes": {
+        "prefix": ["sdt-themes", "themes"],
+        "body": [
+            "slds-theme_${1|default,shade,alert-texture|}"
+            ],
+        "description": "Add Themes to your elements"
+    },
+    "slds-truncate": {
+        "prefix": ["sdt-truncate", "truncate"],
+        "body": [
+            "slds-truncate"
+            ],
+        "description": "Add truncate to your elements"
+    },
+    "slds-Visibility": {
+        "prefix": ["sdt-show hide", "show hide"],
+        "body": [
+            "slds-${1|hide,show|}"
+            ],
+        "description": "Add show or hide to your elements"
     }
 }
