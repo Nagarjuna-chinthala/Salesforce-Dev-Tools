@@ -1,0 +1,93 @@
+{
+    "import-alert": {
+        "prefix": ["sdt-alert", "import alert"],
+        "body": [
+            "import LightningAlert from 'lightning/alert';"
+            ],
+        "description": "import alert module"
+    },
+    "import-apex": {
+        "prefix": ["sdt-apex", "import apex"],
+        "body": [
+            "import ${2:|getSObjectValue,refreshApex|} from \"@salesforce/apex\";"
+            ],
+        "description": "import apex modules"
+    },
+    "import-apex class": {
+        "prefix": ["sdt-apex class", "import apex class"],
+        "body": [
+            "import ${2:methodName} from \"@salesforce/apex/${1:className}.${2:methodName}\";"
+            ],
+        "description": "import apex class method"
+    },
+    "import-formFactor": {
+        "prefix": ["sdt-formFactor", "import formFactor"],
+        "body": [
+            "import CLIENT_FORM_FACTOR from @salesforce/client/formFactor"
+            ],
+        "description": "import apex class method"
+    },
+    "import-label": {
+        "prefix": ["sdt-label", "import label"],
+        "body": [
+            "import ${1:labelName} from \"@salesforce/label/${1:labelReference}\";"
+            ],
+        "description": "import label module"
+    },
+    "import-messageChannel": {
+        "prefix": ["sdt-messageChannel", "import messageChannel"],
+        "body": [
+            "import ${2:channelName} from \"@salesforce/messageChannel/${1:channelReference}\";"
+            ],
+        "description": "import messageChannel module"
+    },
+    "import-resourceUrl": {
+        "prefix": ["sdt-resourceUrl", "import resourceUrl"],
+        "body": [
+            "import ${1:resourceName} from \"@salesforce/resourceUrl/${1:resourceReference}\";"
+            ],
+        "description": "import static resources module"
+    },
+    "import-schema object": {
+        "prefix": ["sdt-schema object", "import schema object"],
+        "body": [
+            "import ${2:objectName} from \"@salesforce/schema/${1:bjectReference}\";"
+            ],
+        "description": "import Salesforce objects module"
+    },
+    "import-schema field": {
+        "prefix": ["sdt-schema field", "import schema field"],
+        "body": [
+            "import ${3:fieldName} from \"@salesforce/schema/${1:object}.${2:fieldReference}\";"
+            ],
+        "description": "import Salesforce fields module"
+    },
+    "import-user": {
+        "prefix": ["sdt-user", "import user"],
+        "body": [
+            "import userId from \"@salesforce/user/Id\";"
+            ],
+        "description": "import current user ID module"
+    },
+    "import-isGuest": {
+        "prefix": ["sdt-isGuest", "import isGuest"],
+        "body": [
+            "import isGuestUser from \"@salesforce/user/isGuest\";"
+            ],
+        "description": "import to determine whether the user is a guest user module"
+    },
+    "import-userPermission": {
+        "prefix": ["sdt-userPermission", "import userPermission"],
+        "body": [
+            "import has${1:Permission} from \"@salesforce/userPermission/${1:Permission}\";"
+            ],
+        "description": "Import a permission and check whether its assigned to the current user."
+    },
+    "import-customPermission": {
+        "prefix": ["sdt-customPermission", "import customPermission"],
+        "body": [
+            "import has${1:Permission} from \"@salesforce/customPermission/${1:Permission}\";"
+            ],
+        "description": "mport a custom permission and check whether its assigned to the current user."
+    }
+}
