@@ -20,3 +20,11 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 ## [0.0.7] - 13-10-2023
 - Added editor windows context menu option to deploy/ retrieve
 - Added explorer windows context menu option to deploy/ retrieve
+
+## [0.1.0] - 21-10-2023
+- Added new feature org workspace color
+- updated project folder structure for easy maintaince 
+
+## [0.2.0] - 28-10-2023
+- Added slds style classes snippets 
+- added javascript import snippets 
