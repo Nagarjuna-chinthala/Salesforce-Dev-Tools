@@ -34,7 +34,9 @@
     "onCommand:sfdevtools.retrieveFile",
     "onCommand:sfdevtools.changeWorkspaceColor",
     "onCommand:sfdevtools.changeWorkspaceColorDefault",
-    "onCommand:sfdevtools.insertLightningMarkup"
+    "onCommand:sfdevtools.insertLightningMarkup",
+    "*",
+    "onCommand:sfdevtools.openLwcLibrary"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -58,6 +60,10 @@
         {
             "command": "sfdevtools.insertLightningMarkup",
             "title": "DT: Insert LWC Markup code"
+        },
+        {
+            "command": "sfdevtools.openLwcLibrary",
+            "title": "SDT: Open LWC Library"
         }
     ],
     "menus": {
@@ -70,6 +76,11 @@
             {
                 "when": "config.salesforceDevTools.editor.hideOptions == false",
                 "command": "sfdevtools.retrieveFile",
+                "group": "DeployRetrieveCmds@1"
+            },
+            {
+                "when": "editorLangId == html",
+                "command": "sfdevtools.openLwcLibrary",
                 "group": "DeployRetrieveCmds@1"
             }
         ],

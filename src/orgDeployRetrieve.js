@@ -1,6 +1,7 @@
 const vscode = require('vscode');
 const window = vscode.window;
-const workspace = vscode.workspace;
+
+var util = require('./util');
 
 var labels = require('./labels');
 const forceApp = 'force-app';
@@ -9,6 +10,8 @@ const layoutFile = '\\layouts\\';
 const deployCommand = 'sfdx force:source:deploy ';
 const retrieveCommand = 'sfdx force:source:retrieve ';
 let sfTerminal;
+let lwcLibraryHomeUrl = 'https://developer.salesforce.com/docs/component-library/overview/components';
+let lwcLibraryBaseUrl = 'https://developer.salesforce.com/docs/component-library/bundle/lightning-';
 
 function deploy(){
     var isFileOpen = window.activeTextEditor;
@@ -109,8 +112,21 @@ function executeCommandInTerminal(terminalCommand) {
     sfTerminal.sendText(terminalCommand);
     return sfTerminal;
 }
+
+// to open selected lwc component in browser 
+function openLwcLibrary(){
+    let selectedText = util.getSelectedText();
+
+    if(selectedText){
+        vscode.env.openExternal(vscode.Uri.parse(lwcLibraryBaseUrl+selectedText));
+    }else{
+        vscode.env.openExternal(vscode.Uri.parse(lwcLibraryHomeUrl));
+    }
+}
+
 // export modules for availability 
 module.exports = {
     deploy,
-    retrieve
+    retrieve,
+    openLwcLibrary
 };
