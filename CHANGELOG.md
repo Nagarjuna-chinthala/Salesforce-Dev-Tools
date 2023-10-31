@@ -32,3 +32,4 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 ## [0.3.0] - 28-10-2023
 - Open selected lwc compoenent in browser 
 - if not selected then open lwc components home page
+- xml file type snippets added

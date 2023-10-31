@@ -1,0 +1,104 @@
+{
+    "lwc-targets": {
+        "prefix": ["sdt-targets", "targets"],
+        "body": [
+            "<target>lightning__${1|AppPage,FlowScreen,HomePage,Inbox,RecordAction,RecordPage,Tab,UtilityBar,VoiceExtension|}</target>"
+            ],
+        "description": "LWC Configuration File supported lightning targets"
+    },
+    "package-template": {
+        "prefix": ["sdt-package template", "package template"],
+        "scope": "xml",
+        "body": [
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>",
+            "<Package xmlns=\"http://soap.sforce.com/2006/04/metadata\">",
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>ApexClass</name>",
+            "   </types>",
+            "   <version>55.0</version>",
+            "</Package>"
+            ],
+        "description": "salesforce sample package.xml template"
+    },
+    "package-classes": {
+        "prefix": ["sdt-Apex Class", "ApexClass"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>ApexClass</name>",
+            "   </types>"
+            ],
+        "description": "ApexClass package.xml metadata"
+    },
+    "package-vf page": {
+        "prefix": ["sdt-vf page", "visualforce"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>ApexPage</name>",
+            "   </types>"
+            ],
+        "description": "Visualforce pages package.xml metadata"
+    },
+    "package-Trigger": {
+        "prefix": ["sdt-Apex Trigger", "Apex Trigger"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>ApexTrigger</name>",
+            "   </types>"
+            ],
+        "description": "ApexTrigger package.xml metadata"
+    },
+    "package-aura": {
+        "prefix": ["sdt-aura", "aura comp"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>AuraDefinitionBundle</name>",
+            "   </types>"
+            ],
+        "description": "Aura components package.xml metadata"
+    },
+    "package-lwc": {
+        "prefix": ["sdt-lwc", "lwc"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>LightningComponentBundle</name>",
+            "   </types>"
+            ],
+        "description": "LightningComponentBundle package.xml metadata"
+    },
+    "package-Static Resource": {
+        "prefix": ["sdt-Static Resource", "Static Resource"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>StaticResource</name>",
+            "   </types>"
+            ],
+        "description": "StaticResource package.xml metadata"
+    },
+    "package-FlexiPage": {
+        "prefix": ["sdt-Flexi Page", "Flexi Page"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>FlexiPage</name>",
+            "   </types>"
+            ],
+        "description": "Flexi Page package.xml metadata"
+    },
+    "package-Metadata": {
+        "prefix": ["sdt-Custom Metadata", "Metadata"],
+        "body": [
+            "   <types>",
+            "       <members>*</members>",
+            "       <name>CustomMetadata</name>",
+            "   </types>"
+            ],
+        "description": "Custom Metadata package.xml metadata"
+    }
+}
