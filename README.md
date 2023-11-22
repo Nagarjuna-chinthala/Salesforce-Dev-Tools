@@ -17,4 +17,6 @@ Salesforce doesn't provide right click menu to show deploy/retrieve for scratch 
 ![Example Deploy](https://github.com/Nagarjuna-chinthala/Salesforce-Dev-Tools/blob/main/images/Deploy-retrieve-cmds.gif)
 4. Org workspace color: We can be confuled, if we have multiple orgs connected in vs code workspace. we can add different colors for diffrent org workspaces to easy identify the which org it is.
 ![Example org color](https://github.com/Nagarjuna-chinthala/Salesforce-Dev-Tools/blob/main/images/OrgWorkspaceColor.gif)
-5. slds and js snippets are added. 
+5. slds, xml and js snippets are added. 
+6. Right click on html markup to open lwc component library.
+7. JSON Formatter & Validator

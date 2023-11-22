@@ -2,7 +2,7 @@
   "name": "sfdevtools",
   "displayName": "Salesforce Dev Tools",
   "description": "Some useful handy tools for salesforce developers.",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "license": "MIT",
   "publisher": "Nagarjuna",
   "repository": {
@@ -64,6 +64,10 @@
         {
             "command": "sfdevtools.openLwcLibrary",
             "title": "SDT: Open LWC Library"
+        },
+        {
+            "command": "sfdevtools.formatJson",
+            "title": "SDT: Format JSON Data"
         }
     ],
     "menus": {

@@ -7,8 +7,8 @@ var labels = require('./labels');
 const forceApp = 'force-app';
 const packageFile = 'manifest\\';
 const layoutFile = '\\layouts\\';
-const deployCommand = 'sfdx force:source:deploy ';
-const retrieveCommand = 'sfdx force:source:retrieve ';
+const deployCommand = 'sfdx project deploy start ';
+const retrieveCommand = 'sfdx project retrieve start ';
 let sfTerminal;
 let lwcLibraryHomeUrl = 'https://developer.salesforce.com/docs/component-library/overview/components';
 let lwcLibraryBaseUrl = 'https://developer.salesforce.com/docs/component-library/bundle/lightning-';
@@ -31,12 +31,12 @@ function deploy(){
                 // for layouts
                 if(currentFilePath.includes(layoutFile)){
                     relativePath = currentFilePath.split(layoutFile)[1];
-                    terminalCommand = deployCommand + '-m '+'"Layout:'+relativePath.substring(0, relativePath.length - 16)+'"';
+                    terminalCommand = deployCommand + '-c -m '+'"Layout:'+relativePath.substring(0, relativePath.length - 16)+'"';
                 }
                 // all other components
                 else{
                     relativePath = forceApp + currentFilePath.split(forceApp)[1];
-                    terminalCommand = deployCommand+'-p '+relativePath;
+                    terminalCommand = deployCommand+'-c -d '+relativePath;
                 }
             }
             // for package files in manifest folder
@@ -75,12 +75,12 @@ function retrieve(){
                 // for layouts
                 if(currentFilePath.includes(layoutFile)){
                     relativePath = currentFilePath.split(layoutFile)[1];
-                    terminalCommand = retrieveCommand + '-m '+'"Layout:'+relativePath.substring(0, relativePath.length - 16)+'"';
+                    terminalCommand = retrieveCommand + '-c -m '+'"Layout:'+relativePath.substring(0, relativePath.length - 16)+'"';
                 }
                 // all other components
                 else{
                     relativePath = forceApp + currentFilePath.split(forceApp)[1];
-                    terminalCommand = retrieveCommand+'-p '+relativePath;
+                    terminalCommand = retrieveCommand+'-c -d '+relativePath;
                 }
             }
             // for package files in manifest folder

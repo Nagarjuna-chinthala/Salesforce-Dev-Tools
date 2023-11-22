@@ -1,10 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
+const path = require('path');
 var orgDeployRetrieve = require('./src/orgDeployRetrieve');
 var orgWorkspaceColor = require('./src/orgWorkspaceColor');
 var lwcHtmlMarkup = require('./src/lwcHtmlMarkup');
 var codeDiagnostics = require('./src/codeDiagnostics');
+var jsonFormatter = require('./src/jsonFormatter');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -44,16 +46,53 @@ function activate(context) {
 		orgDeployRetrieve.openLwcLibrary();
     });
 
+	// Deploy file command
+	let formatJson = vscode.commands.registerCommand('sfdevtools.formatJson', function () {
+		jsonFormatter.formatJsonData();
+	});
+
 	// todo: create diagnostics  
-	const collection = vscode.languages.createDiagnosticCollection('test');
+	//const collection = vscode.languages.createDiagnosticCollection('test');
 
 	if (vscode.window.activeTextEditor) {
-		codeDiagnostics.upsertDiagnostics(vscode.window.activeTextEditor.document, collection);
+		//codeDiagnostics.upsertDiagnostics(vscode.window.activeTextEditor.document, collection);
+		//codeDiagnostics.findMatch();
 	}
-	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
-		if (editor) {
-			codeDiagnostics.upsertDiagnostics(editor.document, collection);
+	// context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+	// 	if (editor) {
+	// 		codeDiagnostics.upsertDiagnostics(editor.document, collection);
+	// 	}
+	// }));
+	function testclose(){
+		vscode.window.showErrorMessage('saved');
+	}
+
+	var activeEditor = vscode.window.activeTextEditor;
+	let document = activeEditor.document;
+	var currentlyOpenFilePath = document.fileName;
+	var currentlyOpenTabfileName = path.basename(currentlyOpenFilePath);
+	let dgCollection = vscode.languages.createDiagnosticCollection(currentlyOpenTabfileName);
+	context.subscriptions.push(dgCollection);
+
+	// it will run for switching between tabs 
+	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) => {
+		
+		if (editor.document.languageId == 'html'){
+			//activeEditor = editor;
+			codeDiagnostics.findMatch(activeEditor);
 		}
+	}));
+
+	// it will run on changes on document 
+	context.subscriptions.push(vscode.workspace.onDidChangeTextDocument((editor) => {
+		if (editor.document.languageId == 'html'){
+           codeDiagnostics.findMatch(activeEditor);
+		}
+	}));
+
+	// on close document delete diagnostics 
+	context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(() => {
+           codeDiagnostics.findMatch(activeEditor);
 	}));
 
 	context.subscriptions.push(

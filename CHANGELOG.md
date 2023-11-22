@@ -29,7 +29,13 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 - Added slds style classes snippets 
 - added javascript import snippets 
 
-## [0.3.0] - 28-10-2023
+## [0.3.0] - 04-11-2023
 - Open selected lwc compoenent in browser 
 - if not selected then open lwc components home page
+
+## [0.4.0] - 12-11-2023
 - xml file type snippets added
+
+## [0.5.0] - 19-11-2023
+- JSON Formatter & Validator
+- Improve performance
