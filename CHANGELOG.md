@@ -39,3 +39,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 ## [0.5.0] - 19-11-2023
 - JSON Formatter & Validator
 - Improve performance
+
+## [0.5.1] - 22-11-2023
+- Readme file updated
