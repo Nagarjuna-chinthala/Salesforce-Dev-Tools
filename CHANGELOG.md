@@ -42,3 +42,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.5.1] - 22-11-2023
 - Readme file updated
+
+## [0.6.0] - 04-12-2023
+- Added new feature to retrieve any metadata from org

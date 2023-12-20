@@ -2,6 +2,7 @@ const vscode = require('vscode');
 const window = vscode.window;
 
 var util = require('./util');
+var constants = require('./constants');
 
 var labels = require('./labels');
 const forceApp = 'force-app';
@@ -105,7 +106,7 @@ function retrieve(){
 function executeCommandInTerminal(terminalCommand) {
     // if terminal is already there, then don't create new terminal, reuse existing one
     if (sfTerminal === undefined || sfTerminal.exitStatus !==  undefined){
-        sfTerminal = vscode.window.createTerminal(labels.terminalName);
+        sfTerminal = window.createTerminal(labels.terminalName);
     }
     
     sfTerminal.show(); 
@@ -124,9 +125,30 @@ function openLwcLibrary(){
     }
 }
 
+function retrieveFileFromOrg(){
+    // check if it is a valid workspace
+    if(vscode.workspace.workspaceFolders){
+        // show picker to choose metadata type
+        window.showQuickPick(Array.from(constants.packageMetadataMap.keys()),{
+            placeHolder: 'Select a metadat type to retrieve'
+        }).then(result =>{
+                const selectedMetadata = constants.packageMetadataMap.get(result);
+                window.showInputBox({
+                    placeHolder: "Enter API name of the component",
+                }).then(inputText =>{
+                    let terminalCommand = retrieveCommand+' --metadata '+selectedMetadata+':'+inputText;
+                    executeCommandInTerminal(terminalCommand);
+                });
+            });
+    }else{
+        window.showErrorMessage(labels.errorNotvalidWorkspace);
+    }
+}
+
 // export modules for availability 
 module.exports = {
     deploy,
     retrieve,
+    retrieveFileFromOrg,
     openLwcLibrary
 };

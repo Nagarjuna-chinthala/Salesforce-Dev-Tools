@@ -32,6 +32,7 @@
   "activationEvents": [
     "onCommand:sfdevtools.deployFile",
     "onCommand:sfdevtools.retrieveFile",
+    "onCommand:sfdevtools.retrieveFromOrg",
     "onCommand:sfdevtools.changeWorkspaceColor",
     "onCommand:sfdevtools.changeWorkspaceColorDefault",
     "onCommand:sfdevtools.insertLightningMarkup",
@@ -43,23 +44,27 @@
     "commands": [
         {
             "command": "sfdevtools.deployFile",
-            "title": "DT: Deploy Current File"
+            "title": "SDT: Deploy Current File"
         },
         {
             "command": "sfdevtools.retrieveFile",
-            "title": "DT: Retrieve Current File"
+            "title": "SDT: Retrieve Current File"
+        },
+        {
+            "command": "sfdevtools.retrieveFromOrg",
+            "title": "SDT: Retrieve Metadata From Org"
         },
         {
             "command": "sfdevtools.changeWorkspaceColor",
-            "title": "DT: Change Org Workspace Color"
+            "title": "SDT: Change Org Workspace Color"
         },
         {
             "command": "sfdevtools.changeWorkspaceColorDefault",
-            "title": "DT: Reset Org Workspace Color to Default"
+            "title": "SDT: Reset Org Workspace Color to Default"
         },
         {
             "command": "sfdevtools.insertLightningMarkup",
-            "title": "DT: Insert LWC Markup code"
+            "title": "SDT: Insert LWC Markup code"
         },
         {
             "command": "sfdevtools.openLwcLibrary",

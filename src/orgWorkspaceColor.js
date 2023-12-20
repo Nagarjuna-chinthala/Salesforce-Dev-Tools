@@ -198,7 +198,6 @@ const colorsMap = new Map([
 function changeWorkspaceColor(){
     // check if it is a valid workspace
     if(vscode.workspace.workspaceFolders){
-        let colorsList  = ['Red','Green', 'Blue'];
         vscode.window.showQuickPick(Array.from(colorsMap.keys()))
             .then(result =>{
                 const newColors = colorsMap.get(result);

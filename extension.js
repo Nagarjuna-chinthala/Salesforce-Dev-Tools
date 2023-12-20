@@ -26,6 +26,11 @@ function activate(context) {
 		orgDeployRetrieve.retrieve();
 	});
 
+	// Retrieve from org
+	let retrieveFromOrg = vscode.commands.registerCommand('sfdevtools.retrieveFromOrg', function () {
+		orgDeployRetrieve.retrieveFileFromOrg();
+	});
+
     // change workspace color
     let changeWorkspaceColor = vscode.commands.registerCommand('sfdevtools.changeWorkspaceColor', function () {
 		orgWorkspaceColor.changeWorkspaceColor();
@@ -98,6 +103,7 @@ function activate(context) {
 	context.subscriptions.push(
 		deployDisposable, 
 		retrieveDisposable, 
+		retrieveFromOrg,
 		changeWorkspaceColor, 
 		changeWorkspaceColorToDefault,
 		insertLightningMarkup,
