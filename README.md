@@ -20,3 +20,4 @@ Salesforce doesn't provide right click menu to show deploy/retrieve for scratch 
 5. slds, xml and js snippets are added. 
 6. Right click on html markup to open lwc component library.
 7. JSON Formatter & Validator
+8. Retrieve Metadata form org
