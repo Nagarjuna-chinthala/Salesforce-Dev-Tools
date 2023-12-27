@@ -11,6 +11,7 @@ const packageFile = '\\manifest\\';
 const layoutFile = '\\layouts\\';
 const deployCommand = 'sfdx project deploy start ';
 const retrieveCommand = 'sfdx project retrieve start ';
+const orgOpenCommand = 'sfdx force org open --json -p';
 let sfTerminal;
 let lwcLibraryHomeUrl = 'https://developer.salesforce.com/docs/component-library/overview/components';
 let lwcLibraryBaseUrl = 'https://developer.salesforce.com/docs/component-library/bundle/lightning-';
@@ -288,10 +289,85 @@ async function retrieveFileFromOrg(cancelToken){
     return myPromise;
 }
 
+async function openCurrentFileInOrg(cancelToken){
+    var isFileOpen = window.activeTextEditor;
+
+    let cancelOperation = false;
+    var myPromise = new Promise(async resolve => {
+        cancelToken.onCancellationRequested(() => {
+			cancelOperation = true;
+			return resolve(false);
+		});
+        try{
+            // check if the text editor is open or not
+            if(isFileOpen){
+                // get current file full path
+                let currentFilePath = window.activeTextEditor.document.fileName;
+                let fileName,fileExtension,fileNamesList;
+
+                if( currentFilePath.includes('\\') ){
+                    fileNamesList = currentFilePath.substring(currentFilePath.lastIndexOf('\\') + 1).split('.');
+                }
+                else{
+                    fileNamesList = currentFilePath.substring(currentFilePath.lastIndexOf('/') + 1).split('.');
+                }
+                if( fileNamesList.length > 3 ){
+                    fileName = fileNamesList[1];
+                    fileExtension = fileNamesList[2];
+                }
+                else{
+                    fileName = fileNamesList[0];
+                    fileExtension = fileNamesList[1];
+                }
+               
+                // check if the current file path is force-app 
+                if(currentFilePath && fileName && fileExtension && constants.FILE_EXTENSION_MAP.has(fileExtension)){
+                    // build relative file path
+
+                    let terminalCommand = orgOpenCommand;
+                    let pathDetails = constants.FILE_EXTENSION_MAP.get(fileExtension); 
+                    terminalCommand = orgOpenCommand + pathDetails.url.replace(pathDetails.replaceKey,fileName);
+                    
+                    if(!cancelOperation){
+
+                        await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                            // if having any errors
+                            if( cmdResult.status !== 0 ){
+                                window.showErrorMessage(labels.logErrorMsg);	
+                                return resolve([]);
+                            }else{// on success
+                                window.showInformationMessage(labels.openInOrgSuccessMsg);
+                                return resolve([]);
+                            }
+                         });
+                    }else{
+                        window.showErrorMessage(labels.cancelExecution);
+                        return resolve(false);
+                    }
+                }
+                else{
+                    window.showErrorMessage(labels.errorFileNotSupport);
+                    return resolve(true);
+                }
+            }
+            // if text editor not open, the show error message
+            else{
+                // Display a message box to the user
+                window.showErrorMessage(labels.errorOpenFile);
+                return resolve(true);
+            }
+        }catch(error){
+            console.log(labels.logErrorMsg, error);
+            return resolve(false);
+        }
+    });
+    return myPromise;
+}
 // export modules for availability 
 module.exports = {
     deploy,
     retrieve,
     retrieveFileFromOrg,
-    openLwcLibrary
+    openLwcLibrary,
+    openCurrentFileInOrg
 };

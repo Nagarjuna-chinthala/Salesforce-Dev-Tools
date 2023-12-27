@@ -36,7 +36,8 @@
     "onCommand:sfdevtools.changeWorkspaceColor",
     "onCommand:sfdevtools.changeWorkspaceColorDefault",
     "onCommand:sfdevtools.insertLightningMarkup",
-    "onCommand:sfdevtools.openLwcLibrary"
+    "onCommand:sfdevtools.openLwcLibrary",
+    "onCommand:sfdevtools.openMetadataInOrg"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -72,6 +73,10 @@
         {
             "command": "sfdevtools.formatJson",
             "title": "SDT: Format JSON Data"
+        },
+        {
+            "command": "sfdevtools.openMetadataInOrg",
+            "title": "SDT: Open Current File in Org"
         }
     ],
     "menus": {
@@ -147,7 +152,7 @@
                 },
                 "salesforceDevTools.explorer.hideOptions": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "markdownDescription": "Enable/Disable Explorer rigth click deploy/retrieve options",
                     "scope": "Content"
                 }

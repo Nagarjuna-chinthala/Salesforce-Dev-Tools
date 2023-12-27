@@ -48,6 +48,17 @@ function activate(context) {
 				return await orgDeployRetrieve.retrieveFileFromOrg(cancelToken);
 			});
 	});
+
+	// Open current metadata in org 
+	let openMetadataInOrg = vscode.commands.registerCommand('sfdevtools.openMetadataInOrg', function () {
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "Opening current file in Org",
+			cancellable: true
+			},async (progress, cancelToken) => {
+				return await orgDeployRetrieve.openCurrentFileInOrg(cancelToken);
+			});
+	});
     // change workspace color
     let changeWorkspaceColor = vscode.commands.registerCommand('sfdevtools.changeWorkspaceColor', function () {
 		orgWorkspaceColor.changeWorkspaceColor();
@@ -124,7 +135,8 @@ function activate(context) {
 		changeWorkspaceColor, 
 		changeWorkspaceColorToDefault,
 		insertLightningMarkup,
-		openLwcLibrary
+		openLwcLibrary,
+		openMetadataInOrg
 	);
 }
 

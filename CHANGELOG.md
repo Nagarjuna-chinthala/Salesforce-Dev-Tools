@@ -45,3 +45,9 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.6.0] - 04-12-2023
 - Added new feature to retrieve any metadata from org
+
+## [0.6.1] - 09-12-2023
+- minor bug fixes and performance improvement 
+
+## [0.7.0] - 09-12-2023
+- New feature: open metadata in org 

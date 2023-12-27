@@ -212,8 +212,17 @@ const colorsMap = new Map([
     }]
 ])
 
+const FILE_EXTENSION_MAP = new Map([
+    ['object-meta', {'metadataType': 'object',
+                    'url':'/lightning/setup/ObjectManager/OBJECT_NAME/view',
+                    'replaceKey': 'OBJECT_NAME'
+                }
+    ]
+]);
+
 // export modules for availability 
 module.exports = {
     packageMetadataMap,
-    colorsMap
+    colorsMap,
+    FILE_EXTENSION_MAP
 };
