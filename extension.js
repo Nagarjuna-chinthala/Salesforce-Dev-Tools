@@ -18,19 +18,36 @@ function activate(context) {
 
 	// Deploy file command
 	let deployDisposable = vscode.commands.registerCommand('sfdevtools.deployFile', function () {
-		orgDeployRetrieve.deploy();
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "Deploying current file",
+			cancellable: true
+			},async (progress, cancelToken) => {
+				return await orgDeployRetrieve.deploy(cancelToken);
+			});
 	});
 
 	// Retrieve file command
 	let retrieveDisposable = vscode.commands.registerCommand('sfdevtools.retrieveFile', function () {
-		orgDeployRetrieve.retrieve();
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "Retrieving current file",
+			cancellable: true
+			},async (progress, cancelToken) => {
+				return await orgDeployRetrieve.retrieve(cancelToken);
+			});
 	});
 
 	// Retrieve from org
 	let retrieveFromOrg = vscode.commands.registerCommand('sfdevtools.retrieveFromOrg', function () {
-		orgDeployRetrieve.retrieveFileFromOrg();
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "Retrieving file",
+			cancellable: true
+			},async (progress, cancelToken) => {
+				return await orgDeployRetrieve.retrieveFileFromOrg(cancelToken);
+			});
 	});
-
     // change workspace color
     let changeWorkspaceColor = vscode.commands.registerCommand('sfdevtools.changeWorkspaceColor', function () {
 		orgWorkspaceColor.changeWorkspaceColor();
