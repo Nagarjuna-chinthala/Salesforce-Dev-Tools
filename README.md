@@ -21,4 +21,4 @@ Salesforce doesn't provide right click menu to show deploy/retrieve for scratch 
 6. Right click on html markup to open lwc component library.
 7. JSON Formatter & Validator
 8. Retrieve Metadata form org
-9. Open Metadata in org from vs code. Supported metadata: Standard and Custom Objects,
+9. Open Metadata in org from vs code. Supported metadata types: Standard and Custom Objects,ApexClass,ApexTrigger,Profile, PermissionSet,StaticResource,Flow,FlexiPage,GlobalValueSet

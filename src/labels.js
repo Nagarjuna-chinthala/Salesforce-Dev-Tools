@@ -16,4 +16,6 @@ module.exports = {
     mdTypePlaceHolder: 'Select a metadat type to retrieve',
     mdNamePlaceHolder: 'Enter API name of the component to retrieve',
     openInOrgSuccessMsg: 'Success: Opened file in Org',
+    soqlErrorMsg: 'Something went wrong, while fetching data from org',
+    soqlErrorNoDataMsg: 'We did not found requested component in org'
 }

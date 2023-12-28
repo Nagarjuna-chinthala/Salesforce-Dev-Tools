@@ -213,9 +213,58 @@ const colorsMap = new Map([
 ])
 
 const FILE_EXTENSION_MAP = new Map([
-    ['object-meta', {'metadataType': 'object',
-                    'url':'/lightning/setup/ObjectManager/OBJECT_NAME/view',
-                    'replaceKey': 'OBJECT_NAME'
+    ['cls', {'metadataType': 'ApexClass',
+                    'url':'/lightning/setup/ApexClasses/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'Name',
+                }
+    ],
+    ['object-meta', {'metadataType': 'CustomObject',
+                    'url':'/lightning/setup/ObjectManager/OBJECT_NAME_OR_ID/view',
+                    'replaceKey': 'OBJECT_NAME_OR_ID',
+                    'whereField':'DeveloperName',
+                }
+    ],
+    ['trigger', {'metadataType': 'ApexTrigger',
+                    'url':'/lightning/setup/ApexClasses/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'Name',
+                }
+    ],
+    ['permissionset-meta', {'metadataType': 'PermissionSet',
+                    'url':'/lightning/setup/PermSets/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'Name',
+                }
+    ],
+    ['profile-meta', {'metadataType': 'Profile',
+                    'url':'/lightning/setup/Profiles/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'Name',
+                }
+    ],
+    ['resource-meta', {'metadataType': 'StaticResource',
+                    'url':'/lightning/setup/StaticResources/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'Name',
+                }
+    ],
+    ['flow-meta', {'metadataType': 'Flow',
+                    'url':'/lightning/setup/Flows/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'Definition.DeveloperName',
+                }
+    ],
+    ['flexipage-meta', {'metadataType': 'FlexiPage',
+                    'url':'/lightning/setup/FlexiPageList/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'DeveloperName',
+                }
+    ],
+    ['globalvalueset-meta', {'metadataType': 'GlobalValueSet',
+                    'url':'/lightning/setup/Picklists/page?address=/METADATA_ID',
+                    'replaceKey': 'METADATA_ID',
+                    'whereField':'DeveloperName',
                 }
     ]
 ]);

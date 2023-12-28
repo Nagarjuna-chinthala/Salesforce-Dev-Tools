@@ -12,6 +12,8 @@ const layoutFile = '\\layouts\\';
 const deployCommand = 'sfdx project deploy start ';
 const retrieveCommand = 'sfdx project retrieve start ';
 const orgOpenCommand = 'sfdx force org open --json -p';
+const soqlQueryCommand = 'sfdx force:data:soql:query --json -t -q ';
+
 let sfTerminal;
 let lwcLibraryHomeUrl = 'https://developer.salesforce.com/docs/component-library/overview/components';
 let lwcLibraryBaseUrl = 'https://developer.salesforce.com/docs/component-library/bundle/lightning-';
@@ -319,20 +321,47 @@ async function openCurrentFileInOrg(cancelToken){
                     fileName = fileNamesList[0];
                     fileExtension = fileNamesList[1];
                 }
-               
+                
                 // check if the current file path is force-app 
                 if(currentFilePath && fileName && fileExtension && constants.FILE_EXTENSION_MAP.has(fileExtension)){
                     // build relative file path
 
-                    let terminalCommand = orgOpenCommand;
+                    let terminalCommand;
                     let pathDetails = constants.FILE_EXTENSION_MAP.get(fileExtension); 
-                    terminalCommand = orgOpenCommand + pathDetails.url.replace(pathDetails.replaceKey,fileName);
-                    
-                    if(!cancelOperation){
+                    // its a standard object
+                    if(fileExtension == 'object-meta' && !fileName.includes('__c')){
+                        terminalCommand = orgOpenCommand + pathDetails.url.replace(pathDetails.replaceKey,fileName);
+                    } 
+                    if(fileExtension == 'object-meta' && fileName.includes('__c')){
+                        fileName = fileName.split('__')[0];
+                    }else{
+                        let queryString = "\"Select Id From "+pathDetails.metadataType+" Where "+pathDetails.whereField+" = "+"\'"+fileName+"\'"+" LIMIT 1\"";
+                        var soqlQuery = soqlQueryCommand+queryString;
 
+                        await runCommandInTerminal( soqlQuery).then(async function( soqlData ){
+                            // print errors on output panel 
+                            if( soqlData.status !== 0 ){
+                                window.showErrorMessage(labels.soqlErrorMsg);
+                                outputChannel.appendLine( soqlData.message );
+                                outputChannel.show();	
+                                return resolve([]);
+                            }
+
+                            //Raising error if no data returned.
+                            if( soqlData.result.records === undefined || soqlData.result.records.length === 0 ){
+                                window.showErrorMessage(labels.soqlErrorNoDataMsg);
+                                return resolve([]);
+                            }
+
+                            let metaDataId = soqlData.result.records[0].Id;
+                            terminalCommand = orgOpenCommand + pathDetails.url.replace(pathDetails.replaceKey,metaDataId);
+                        });
+                    }
+                    
+                    if(!cancelOperation && terminalCommand){
                         await runCommandInTerminal(terminalCommand).then(function(cmdResult){
                             // if having any errors
-                            if( cmdResult.status !== 0 ){
+                            if( cmdResult.status !== 0){
                                 window.showErrorMessage(labels.logErrorMsg);	
                                 return resolve([]);
                             }else{// on success

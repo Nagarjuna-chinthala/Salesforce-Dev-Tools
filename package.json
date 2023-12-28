@@ -82,31 +82,36 @@
     "menus": {
         "editor/context": [
             {
-                "when": "config.salesforceDevTools.editor.hideOptions == false",
+                "when": "config.salesforceDevTools.editor.hideDeployMenu == false",
                 "command": "sfdevtools.deployFile",
-                "group": "DeployRetrieveCmds@1"
+                "group": "SDT@1"
             },
             {
-                "when": "config.salesforceDevTools.editor.hideOptions == false",
+                "when": "config.salesforceDevTools.editor.hideDeployMenu == false",
                 "command": "sfdevtools.retrieveFile",
-                "group": "DeployRetrieveCmds@1"
+                "group": "SDT@1"
             },
             {
-                "when": "editorLangId == html",
+                "when": "(config.salesforceDevTools.editor.hideOpenLwcLibrary == false && editorLangId == html)",
                 "command": "sfdevtools.openLwcLibrary",
-                "group": "DeployRetrieveCmds@1"
+                "group": "SDT@2"
+            },
+            {
+                "when": "(config.salesforceDevTools.editor.hideOpenInOrgMenu == false && (editorLangId == xml || resourceExtname == .cls || resourceExtname == .trigger))",
+                "command": "sfdevtools.openMetadataInOrg",
+                "group": "SDT@3"
             }
         ],
         "explorer/context": [
             {
-                "when": "config.salesforceDevTools.explorer.hideOptions == false",
+                "when": "config.salesforceDevTools.explorer.hideDeployMenu == false",
                 "command": "sfdevtools.deployFile",
-                "group": "DeployRetrieveCmds@1"
+                "group": "SDT@1"
             },
             {
-                "when": "config.salesforceDevTools.explorer.hideOptions == false",
+                "when": "config.salesforceDevTools.explorer.hideDeployMenu == false",
                 "command": "sfdevtools.retrieveFile",
-                "group": "DeployRetrieveCmds@1"
+                "group": "SDT@1"
             }
         ]
     },
@@ -144,16 +149,28 @@
         {
             "title": "Salesforce Dev Tools",
             "properties": {
-                "salesforceDevTools.editor.hideOptions": {
+                "salesforceDevTools.editor.hideDeployMenu": {
                     "type": "boolean",
                     "default": false,
                     "markdownDescription": "Enable/Disable Editor rigth click deploy/retrieve options",
                     "scope": "Content"
                 },
-                "salesforceDevTools.explorer.hideOptions": {
+                "salesforceDevTools.explorer.hideDeployMenu": {
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Enable/Disable Explorer rigth click deploy/retrieve options",
+                    "scope": "Content"
+                },
+                "salesforceDevTools.editor.hideOpenLwcLibrary": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Enable/Disable Editor rigth click Open LWC Library option",
+                    "scope": "Content"
+                },
+                "salesforceDevTools.editor.hideOpenInOrgMenu": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Enable/Disable Editor rigth click Open Current File in Org option",
                     "scope": "Content"
                 }
             }
