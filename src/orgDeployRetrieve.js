@@ -329,12 +329,15 @@ async function openCurrentFileInOrg(cancelToken){
                     let terminalCommand;
                     let pathDetails = constants.FILE_EXTENSION_MAP.get(fileExtension); 
                     // its a standard object
-                    if(fileExtension == 'object-meta' && !fileName.includes('__c')){
-                        terminalCommand = orgOpenCommand + pathDetails.url.replace(pathDetails.replaceKey,fileName);
+                    if(fileExtension == 'object-meta'){
+                        if(!fileName.includes('__c')){
+                            terminalCommand = orgOpenCommand + pathDetails.url.replace(pathDetails.replaceKey,fileName);
+                        }else{
+                            fileName = fileName.split('__')[0];
+                        }
                     } 
-                    if(fileExtension == 'object-meta' && fileName.includes('__c')){
-                        fileName = fileName.split('__')[0];
-                    }else{
+
+                    if(!cancelOperation && !terminalCommand){
                         let queryString = "\"Select Id From "+pathDetails.metadataType+" Where "+pathDetails.whereField+" = "+"\'"+fileName+"\'"+" LIMIT 1\"";
                         var soqlQuery = soqlQueryCommand+queryString;
 

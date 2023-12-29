@@ -261,7 +261,7 @@ const FILE_EXTENSION_MAP = new Map([
                     'whereField':'DeveloperName',
                 }
     ],
-    ['globalvalueset-meta', {'metadataType': 'GlobalValueSet',
+    ['globalValueSet-meta', {'metadataType': 'GlobalValueSet',
                     'url':'/lightning/setup/Picklists/page?address=/METADATA_ID',
                     'replaceKey': 'METADATA_ID',
                     'whereField':'DeveloperName',
