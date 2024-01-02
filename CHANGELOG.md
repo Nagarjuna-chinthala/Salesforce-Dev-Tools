@@ -54,3 +54,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.7.1] - 10-12-2023
 - minor bug fixes 
+
+## [0.7.2] - 16-12-2023
+- minor bug fixes 

@@ -32,7 +32,6 @@ async function deploy(cancelToken){
             if(isFileOpen){
                 // get current file full path
                 let currentFilePath = window.activeTextEditor.document.fileName;
-                window.showErrorMessage(currentFilePath);
                 // check if the current file path is force-app 
                 if(currentFilePath && (currentFilePath.includes(forceApp) || currentFilePath.includes(packageFile))){
                     // build relative file path
