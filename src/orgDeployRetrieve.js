@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const path = require('path');
 const { exec } = require( 'child_process' );
 const window = vscode.window;
 
@@ -6,9 +7,10 @@ var util = require('./util');
 var constants = require('./constants');
 
 var labels = require('./labels');
+const { resourceLimits } = require('worker_threads');
 const forceApp = 'force-app';
-const packageFile = '\\manifest\\';
-const layoutFile = '\\layouts\\';
+const packageFile = 'manifest';
+const layoutFile = 'layouts';
 const deployCommand = 'sfdx project deploy start ';
 const retrieveCommand = 'sfdx project retrieve start ';
 const orgOpenCommand = 'sfdx force org open --json -p';
@@ -33,44 +35,29 @@ async function deploy(cancelToken){
                 // get current file full path
                 let currentFilePath = window.activeTextEditor.document.fileName;
                 // check if the current file path is force-app 
-                if(currentFilePath && (currentFilePath.includes(forceApp) || currentFilePath.includes(packageFile))){
+                if(currentFilePath && vscode.workspace.name){
                     // build relative file path
-                    let relativePath;
+                    let projectName = vscode.workspace.name;
+                    let relativePath = currentFilePath.split(projectName)[1].slice(1);
                     let terminalCommand; 
 
-                    if(currentFilePath.includes(forceApp)){
-                        // for layouts
-                        if(currentFilePath.includes(layoutFile)){
-                            relativePath = currentFilePath.split(layoutFile)[1];
-                            terminalCommand = deployCommand + '--json -c -m '+'"Layout:'+relativePath.substring(0, relativePath.length - 16)+'"';
-                        }
-                        // all other components
-                        else{
-                            relativePath = forceApp + currentFilePath.split(forceApp)[1];
-                            terminalCommand = deployCommand+'--json -c -d '+relativePath;
-                        }
+                    // for layouts
+                    if(relativePath.includes(layoutFile)){
+                        terminalCommand = deployCommand + '--json -c -d '+relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
                     }
                     // for package files in manifest folder
-                    else if(currentFilePath.includes(packageFile)){
-                        relativePath = packageFile + currentFilePath.split(packageFile)[1];
+                    else if(relativePath.includes(packageFile)){
                         terminalCommand = deployCommand+'--json -x '+relativePath;
+                    }// all other components
+                    else{
+                        terminalCommand = deployCommand+'--json -c -d '+relativePath;
                     }
-                    if(!cancelOperation){
+                    
+                    if(!cancelOperation && terminalCommand){
                         await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                            if( cmdResult.status !== 0 ){
-                                window.showErrorMessage(labels.deployErrorMsg);
-                                outputChannel.appendLine(labels.outputChannelL1);
-                                outputChannel.appendLine(labels.outputChannelL2);
-                                outputChannel.appendLine(labels.outputChannelL3);
-                                cmdResult.result.files.forEach(myError => {
-                                    outputChannel.appendLine(myError.type+':'+myError.fullName+'  '+myError.error);
-                                });
-                                outputChannel.show();	
-                                return resolve([]);
-                            }else{
-                                window.showInformationMessage(labels.deploySuccessMsg);
-                                return resolve([]);
-                            }
+                            processResultsOnDeploy(cmdResult).then(function(){
+                                return resolve(true);
+                            });
                          });
                     }else{
                         window.showErrorMessage(labels.cancelExecution);
@@ -112,48 +99,31 @@ async function retrieve(cancelToken){
                 let currentFilePath = window.activeTextEditor.document.fileName;
                 
                 // check if the current file path is force-app 
-                if(currentFilePath && (currentFilePath.includes(forceApp) || currentFilePath.includes(packageFile))){
+                if(currentFilePath && vscode.workspace.name){
                     // build relative file path
-                    let relativePath;
+                    let projectName = vscode.workspace.name;
+                    let relativePath = currentFilePath.split(projectName)[1].slice(1);
                     let terminalCommand; 
 
-                    if(currentFilePath.includes(forceApp)){
-                        // for layouts
-                        if(currentFilePath.includes(layoutFile)){
-                            relativePath = currentFilePath.split(layoutFile)[1];
-                            terminalCommand = retrieveCommand + '--json -c -m '+'"Layout:'+relativePath.substring(0, relativePath.length - 16)+'"';
-                        }
-                        // all other components
-                        else{
-                            relativePath = forceApp + currentFilePath.split(forceApp)[1];
-                            terminalCommand = retrieveCommand+'--json -c -d '+relativePath;
-                        }
+                    // for layouts
+                    if(relativePath.includes(layoutFile)){
+                        terminalCommand = retrieveCommand + '--json -c -d '+relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
                     }
                     // for package files in manifest folder
-                    else if(currentFilePath.includes(packageFile)){
-                        relativePath = packageFile + currentFilePath.split(packageFile)[1];
-                        terminalCommand = retrieveCommand +'--json -x '+relativePath;
+                    else if(relativePath.includes(packageFile)){
+                        terminalCommand = retrieveCommand+'--json -x '+relativePath;
+                    }// all other components
+                    else{
+                        terminalCommand = retrieveCommand+'--json -c -d '+relativePath;
                     }
+                    
                     //executeCommandInTerminal(terminalCommand);
-                    if(!cancelOperation){
+                    if(!cancelOperation && terminalCommand){
                         //executeCommandInTerminal(terminalCommand);
                         await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                            if( cmdResult.status == 0 && cmdResult.result.messages.length){
-                                window.showErrorMessage(labels.retrieveErrorMsg);
-                                outputChannel.appendLine(labels.outputChannelL1);
-                                outputChannel.appendLine(labels.outputChannelL2);
-                                outputChannel.appendLine(labels.outputChannelL3);
-                                cmdResult.result.files.forEach(myError => {
-                                    if(myError.state == 'Failed'){
-                                        outputChannel.appendLine(myError.type+':'+myError.fullName+'  '+myError.error);
-                                    }
-                                });
-                                outputChannel.show();	
-                                return resolve([]);
-                            }else{
-                                window.showInformationMessage(labels.retrieveSuccessMsg);
-                                return resolve([]);
-                            }
+                            processResultsOnRetrieve(cmdResult).then(function(){
+                                return resolve(true);
+                            });
                          });
                     }else{
                         window.showErrorMessage(labels.cancelExecution);
@@ -179,6 +149,97 @@ async function retrieve(cancelToken){
     return myPromise;
 }
 
+async function processResultsOnDeploy(cmdResult){
+    return new Promise(resolve =>{
+        if( cmdResult.status !== 0){
+            window.showErrorMessage(labels.deployErrorMsg);
+            outputChannel.appendLine('');// add line break
+            outputChannel.appendLine(labels.outputChannelErrorL1);
+            if(cmdResult.result){
+                outputChannel.appendLine(labels.outputChannelErrorL2);
+                outputChannel.appendLine(labels.outputChannelErrorL3);
+                cmdResult.result.files.forEach(myError => {
+                    outputChannel.appendLine(myError.type+':'+myError.fullName+'  '+myError.error);
+                });
+                outputChannel.appendLine(labels.completedExecution+cmdResult.result.completedDate);
+            }else if(cmdResult.message){
+                outputChannel.appendLine(cmdResult.message);
+            }else{
+                outputChannel.appendLine(cmdResult);
+            }
+            outputChannel.show();	
+            return resolve(true);
+        }else if(cmdResult.status == 0){
+            window.showInformationMessage(labels.deploySuccessMsg);
+            outputChannel.appendLine('');// add line break
+            outputChannel.appendLine(labels.outputChannelSuccessL1);
+            outputChannel.appendLine(labels.outputChannelSuccessL2);
+            outputChannel.appendLine(labels.outputChannelSuccessL3);
+            
+            if(cmdResult.result){
+                cmdResult.result.details.componentSuccesses.forEach(result => {
+                    if(result.componentType){
+                        outputChannel.appendLine(result.componentType+':'+result.fullName);
+                    }
+                });
+            }
+            outputChannel.appendLine(labels.completedExecution+cmdResult.result.completedDate);
+            return resolve(true);
+        }
+    });
+}
+
+async function processResultsOnRetrieve(cmdResult){
+    return new Promise(resolve =>{
+        // if its failed, handle errors 
+        if( cmdResult.status != 0){
+            window.showErrorMessage(labels.retrieveErrorMsg);
+            outputChannel.appendLine('');// add line break
+            outputChannel.appendLine(labels.outputChannelErrorL1);
+            outputChannel.appendLine(labels.outputChannelSuccessL2);
+            outputChannel.appendLine(labels.outputChannelSuccessL3);
+            if(cmdResult.message){
+                outputChannel.appendLine('ERROR: '+cmdResult.message);
+            }else{
+                outputChannel.appendLine(labels.logErrorMsg);
+            }
+            outputChannel.show();	
+            return resolve([]);
+        }// success
+        else{
+            // partila success, we consider as a error
+            if(cmdResult.result.messages.length){
+                window.showErrorMessage(labels.retrieveErrorMsg);
+                outputChannel.appendLine('');// add line break
+                outputChannel.appendLine(labels.outputChannelErrorL1);
+                outputChannel.appendLine(labels.outputChannelSuccessL2);
+                outputChannel.appendLine(labels.outputChannelSuccessL3);
+                if(cmdResult.result.messages){
+                    cmdResult.result.messages.forEach(result => {
+                        outputChannel.appendLine('ERROR: '+ result.problem);
+                    });
+                }
+                outputChannel.show();
+            }else{
+                window.showInformationMessage(labels.retrieveSuccessMsg);
+                outputChannel.appendLine('');// add line break
+                outputChannel.appendLine(labels.outputChannelSuccessL1);
+                outputChannel.appendLine(labels.outputChannelSuccessL2);
+                outputChannel.appendLine(labels.outputChannelSuccessL3);
+               
+                if(cmdResult.result){
+                    cmdResult.result.fileProperties.forEach(result => {
+                        if(result.id){
+                            outputChannel.appendLine(result.type+':'+result.fullName);
+                        }
+                    });
+                }
+            }
+            
+            return resolve(true);
+        }
+    });
+}
 async function runCommandInTerminal(command){
     return new Promise(resolve=>{
         var outputJson = '';

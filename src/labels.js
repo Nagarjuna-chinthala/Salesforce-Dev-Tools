@@ -8,14 +8,18 @@ module.exports = {
     deploySuccessMsg: 'Success: Deployed successfully',
     retrieveErrorMsg: 'Error: Retrieve failed, Check errors',
     retrieveSuccessMsg: 'Success: Retrieved from org successfully',
-    outputChannelL1: '==== Deploy/ Retrieve Errors ====',
-    outputChannelL2: 'FILE NAME                           ERRORS',
-    outputChannelL3: '──────────────────────────────────  ─────────────────────────────────',
+    outputChannelErrorL1: '==== Deploy/ Retrieve Error Log ====',
+    outputChannelErrorL2: 'FILE NAME                           ERRORS',
+    outputChannelErrorL3: '──────────────────────────────────  ─────────────────────────────────',
+    outputChannelSuccessL1: '==== Deploy/ Retrieve Success Log ====',
+    outputChannelSuccessL2: 'FILE NAME',
+    outputChannelSuccessL3: '──────────────────────────────────',
     cancelExecution: 'Execution cancelled',
     logErrorMsg: 'ERROR: Something went Wrong',
     mdTypePlaceHolder: 'Select a metadat type to retrieve',
     mdNamePlaceHolder: 'Enter API name of the component to retrieve',
     openInOrgSuccessMsg: 'Success: Opened file in Org',
     soqlErrorMsg: 'Something went wrong, while fetching data from org',
-    soqlErrorNoDataMsg: 'We did not found requested component in org'
+    soqlErrorNoDataMsg: 'We did not found requested component in org',
+    completedExecution: 'Completed Execution at '
 }
