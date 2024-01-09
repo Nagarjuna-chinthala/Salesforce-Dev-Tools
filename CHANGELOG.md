@@ -60,3 +60,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.7.3] - 24-12-2023
 - minor bug fixes and performance Improvement
+
+## [0.7.4] - 07-01-2024
+- Added support more metadata types to retrieve
