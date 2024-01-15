@@ -309,26 +309,15 @@ async function retrieveFileFromOrg(cancelToken){
                             window.showInputBox({
                                 placeHolder: labels.mdNamePlaceHolder,
                             }).then(async inputText =>{
+                                inputText = selectedMetadata == 'Layout' ? `"${inputText}"`: inputText;
                                 let terminalCommand = retrieveCommand+' --json --metadata '+selectedMetadata+':'+inputText;
                                 if(!cancelOperation && inputText){
-                                    await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                                        if( cmdResult.status == 0 && cmdResult.result.messages.length){
-                                            window.showErrorMessage(labels.retrieveErrorMsg);
-                                            outputChannel.appendLine(labels.outputChannelL1);
-                                            outputChannel.appendLine(labels.outputChannelL2);
-                                            outputChannel.appendLine(labels.outputChannelL3);
-                                            cmdResult.result.files.forEach(myError => {
-                                                if(myError.state == 'Failed'){
-                                                    outputChannel.appendLine(myError.type+':'+myError.fullName+'  '+myError.error);
-                                                }
-                                            });
-                                            outputChannel.show();	
-                                            return resolve([]);
-                                        }else{
-                                            window.showInformationMessage(labels.retrieveSuccessMsg);
-                                            return resolve([]);
-                                        }
+                                     await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                                        processResultsOnRetrieve(cmdResult).then(function(){
+                                            return resolve(true);
+                                        });
                                      });
+
                                 }else{
                                     window.showErrorMessage(labels.cancelExecution);
                                     return resolve(false);

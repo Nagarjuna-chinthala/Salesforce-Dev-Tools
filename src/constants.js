@@ -134,6 +134,7 @@ const packageMetadataMap = new Map([
     ['TopicsForObjects','TopicsForObjects'],
     ['TransactionSecurityPolicy','TransactionSecurityPolicy'],
     ['Translations','Translations'],
+    ['Validation Rule','ValidationRule'],
     ['WaveApplication','WaveApplication'],
     ['WaveDashboard','WaveDashboard'],
     ['WaveDataflow','WaveDataflow'],
