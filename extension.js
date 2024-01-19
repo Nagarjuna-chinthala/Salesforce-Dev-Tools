@@ -59,6 +59,29 @@ function activate(context) {
 				return await orgDeployRetrieve.openCurrentFileInOrg(cancelToken);
 			});
 	});
+
+	// deploy selected folder to org
+    let deployFolderToOrg = vscode.commands.registerCommand('sfdevtools.deployFolder', (contexDetails)=> {
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "Deploying folder",
+			cancellable: true
+			},async (progress, cancelToken) => {
+				return await orgDeployRetrieve.deployFolder(cancelToken, contexDetails.fsPath);
+			});
+    });
+
+	// deploy selected folder to org
+    let retrieveFolderFromOrg = vscode.commands.registerCommand('sfdevtools.retrieveFolder', (contexDetails)=> {
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "Retrieve folder",
+			cancellable: true
+			},async (progress, cancelToken) => {
+				return await orgDeployRetrieve.retrieveFolder(cancelToken, contexDetails.fsPath);
+			});
+    });
+
     // change workspace color
     let changeWorkspaceColor = vscode.commands.registerCommand('sfdevtools.changeWorkspaceColor', function () {
 		orgWorkspaceColor.changeWorkspaceColor();
@@ -136,7 +159,9 @@ function activate(context) {
 		changeWorkspaceColorToDefault,
 		insertLightningMarkup,
 		openLwcLibrary,
-		openMetadataInOrg
+		openMetadataInOrg,
+		deployFolderToOrg,
+		retrieveFolderFromOrg
 	);
 }
 

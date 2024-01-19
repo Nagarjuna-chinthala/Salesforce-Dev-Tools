@@ -2,7 +2,7 @@
   "name": "sfdevtools",
   "displayName": "Salesforce Dev Tools",
   "description": "Some useful handy tools for salesforce developers.",
-  "version": "0.7.5",
+  "version": "0.8.0",
   "license": "MIT",
   "publisher": "Nagarjuna",
   "repository": {
@@ -30,14 +30,6 @@
     "SF Tools"
   ],
   "activationEvents": [
-    "onCommand:sfdevtools.deployFile",
-    "onCommand:sfdevtools.retrieveFile",
-    "onCommand:sfdevtools.retrieveFromOrg",
-    "onCommand:sfdevtools.changeWorkspaceColor",
-    "onCommand:sfdevtools.changeWorkspaceColorDefault",
-    "onCommand:sfdevtools.insertLightningMarkup",
-    "onCommand:sfdevtools.openLwcLibrary",
-    "onCommand:sfdevtools.openMetadataInOrg"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -77,6 +69,14 @@
         {
             "command": "sfdevtools.openMetadataInOrg",
             "title": "SDT: Open Current File in Org"
+        },
+        {
+            "command": "sfdevtools.deployFolder",
+            "title": "SDT: Deploy Folder"
+        },
+        {
+            "command": "sfdevtools.retrieveFolder",
+            "title": "SDT: Retrieve Folder"
         }
     ],
     "menus": {
@@ -104,13 +104,13 @@
         ],
         "explorer/context": [
             {
-                "when": "config.salesforceDevTools.explorer.hideDeployMenu == false",
-                "command": "sfdevtools.deployFile",
+                "when": "config.salesforceDevTools.explorer.hideFolderDeployMenu == false && explorerResourceIsFolder",
+                "command": "sfdevtools.deployFolder",
                 "group": "SDT@1"
             },
             {
-                "when": "config.salesforceDevTools.explorer.hideDeployMenu == false",
-                "command": "sfdevtools.retrieveFile",
+                "when": "config.salesforceDevTools.explorer.hideFolderDeployMenu == false && explorerResourceIsFolder",
+                "command": "sfdevtools.retrieveFolder",
                 "group": "SDT@1"
             }
         ]
@@ -155,10 +155,10 @@
                     "markdownDescription": "Enable/Disable Editor rigth click deploy/retrieve options",
                     "scope": "Content"
                 },
-                "salesforceDevTools.explorer.hideDeployMenu": {
+                "salesforceDevTools.explorer.hideFolderDeployMenu": {
                     "type": "boolean",
-                    "default": true,
-                    "markdownDescription": "Enable/Disable Explorer rigth click deploy/retrieve options",
+                    "default": false,
+                    "markdownDescription": "Enable/Disable Explorer Folder rigth click deploy/retrieve options",
                     "scope": "Content"
                 },
                 "salesforceDevTools.editor.hideOpenLwcLibrary": {
@@ -171,6 +171,13 @@
                     "type": "boolean",
                     "default": false,
                     "markdownDescription": "Enable/Disable Editor rigth click Open Current File in Org option",
+                    "scope": "Content"
+                },
+                "salesforceDevTools.salesforceCommandToUse": {
+                    "type": "string",
+                    "enum": ["sfdx", "sf"],
+                    "default": "sfdx",
+                    "markdownDescription": "Choose which salesforce command to use deploy/ retrieve.",
                     "scope": "Content"
                 }
             }

@@ -8,13 +8,16 @@ var constants = require('./constants');
 
 var labels = require('./labels');
 const { resourceLimits } = require('worker_threads');
-const forceApp = 'force-app';
 const packageFile = 'manifest';
 const layoutFile = 'layouts';
-const deployCommand = 'sfdx project deploy start ';
-const retrieveCommand = 'sfdx project retrieve start ';
-const orgOpenCommand = 'sfdx force org open --json -p';
-const soqlQueryCommand = 'sfdx force:data:soql:query --json -t -q ';
+
+const userConfigCmd = vscode.workspace.getConfiguration().get('salesforceDevTools.editor.salesforceCommandToUse');
+const orgOpenCommand = userConfigCmd +' org open --json -p';
+const soqlQueryCommand = userConfigCmd +' data query --json -t -q ';
+const cmdFlag = '--json -c -d ';
+const packageCmdFlag = '--json -x ';
+const deployCommand = userConfigCmd+' project deploy start ';
+const retrieveCommand = userConfigCmd+' project retrieve start ';
 
 let sfTerminal;
 let lwcLibraryHomeUrl = 'https://developer.salesforce.com/docs/component-library/overview/components';
@@ -43,14 +46,14 @@ async function deploy(cancelToken){
 
                     // for layouts
                     if(relativePath.includes(layoutFile)){
-                        terminalCommand = deployCommand + '--json -c -d '+relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
+                        terminalCommand = deployCommand + cmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
                     }
                     // for package files in manifest folder
                     else if(relativePath.includes(packageFile)){
-                        terminalCommand = deployCommand+'--json -x '+relativePath;
+                        terminalCommand = deployCommand + packageCmdFlag + relativePath;
                     }// all other components
                     else{
-                        terminalCommand = deployCommand+'--json -c -d '+relativePath;
+                        terminalCommand = deployCommand + cmdFlag + relativePath;
                     }
                     
                     if(!cancelOperation && terminalCommand){
@@ -107,14 +110,14 @@ async function retrieve(cancelToken){
 
                     // for layouts
                     if(relativePath.includes(layoutFile)){
-                        terminalCommand = retrieveCommand + '--json -c -d '+relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
+                        terminalCommand = retrieveCommand + cmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
                     }
                     // for package files in manifest folder
                     else if(relativePath.includes(packageFile)){
-                        terminalCommand = retrieveCommand+'--json -x '+relativePath;
+                        terminalCommand = retrieveCommand+packageCmdFlag+relativePath;
                     }// all other components
                     else{
-                        terminalCommand = retrieveCommand+'--json -c -d '+relativePath;
+                        terminalCommand = retrieveCommand + cmdFlag + relativePath;
                     }
                     
                     //executeCommandInTerminal(terminalCommand);
@@ -444,11 +447,95 @@ async function openCurrentFileInOrg(cancelToken){
     });
     return myPromise;
 }
-// export modules for availability 
+
+async function deployFolder(cancelToken, folderPath){
+    let cancelOperation = false;
+    var myPromise = new Promise(async resolve => {
+        cancelToken.onCancellationRequested(() => {
+			cancelOperation = true;
+			return resolve(false);
+		});
+        try{
+            // check if the current file path is force-app 
+            if(vscode.workspace.name){
+                // build relative file path
+                let projectName = vscode.workspace.name;
+                let relativePath = folderPath.split(projectName)[1].slice(1);
+                let terminalCommand = deployCommand + cmdFlag + relativePath;
+                window.showErrorMessage(terminalCommand);
+
+                if(!cancelOperation && terminalCommand){
+                    await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                        processResultsOnDeploy(cmdResult).then(function(){
+                            return resolve(true);
+                        });
+                        });
+                }else{
+                    window.showErrorMessage(labels.cancelExecution);
+                    return resolve(false);
+                }
+            }
+            else{
+                window.showErrorMessage(labels.errorFileNotSupport);
+                return resolve(true);
+            }
+            
+        }catch(error){
+            console.log(labels.logErrorMsg, error);
+            return resolve(false);
+        }
+    });
+    return myPromise;
+}
+
+async function retrieveFolder (cancelToken, folderPath){
+
+    let cancelOperation = false;
+    var myPromise = new Promise(async resolve => {
+        cancelToken.onCancellationRequested(() => {
+			cancelOperation = true;
+			return resolve(false);
+		});
+        try{
+            // check if the current file path is force-app 
+            if(vscode.workspace.name){
+                // build relative file path
+                let projectName = vscode.workspace.name;
+                let relativePath = folderPath.split(projectName)[1].slice(1);
+                let terminalCommand = retrieveCommand + cmdFlag + relativePath;
+                
+                //executeCommandInTerminal(terminalCommand);
+                if(!cancelOperation && terminalCommand){
+                    //executeCommandInTerminal(terminalCommand);
+                    await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                        processResultsOnRetrieve(cmdResult).then(function(){
+                            return resolve(true);
+                        });
+                        });
+                }else{
+                    window.showErrorMessage(labels.cancelExecution);
+                    return resolve(false);
+                }
+            }
+            else{
+                window.showErrorMessage(labels.errorFileNotSupport);
+                return resolve(true);
+            }
+
+        }catch(error){
+            console.log(labels.logErrorMsg, error);
+            return resolve(false);
+        }
+    });
+    return myPromise;
+}
+
 module.exports = {
     deploy,
     retrieve,
     retrieveFileFromOrg,
     openLwcLibrary,
-    openCurrentFileInOrg
+    openCurrentFileInOrg,
+    deployFolder,
+    retrieveFolder
 };

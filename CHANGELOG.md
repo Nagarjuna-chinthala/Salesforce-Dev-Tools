@@ -66,3 +66,7 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.7.5] - 14-01-2024
 - minor bug fixes and performance Improvement
+
+## [0.8.0] - 20-01-2024
+- new feature: Now can deploy/retrieve folders 
+- now user can config which cli command to use sfdx/ sf
