@@ -70,3 +70,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 ## [0.8.0] - 20-01-2024
 - new feature: Now can deploy/retrieve folders 
 - now user can config which cli command to use sfdx/ sf
+
+## [0.8.1] - 24-01-2024
+- now support older vs code versions
