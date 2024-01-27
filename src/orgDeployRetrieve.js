@@ -16,8 +16,9 @@ const orgOpenCommand = userConfigCmd +' org open --json -p';
 const soqlQueryCommand = userConfigCmd +' data query --json -t -q ';
 const cmdFlag = '--json -c -d ';
 const packageCmdFlag = '--json -x ';
-const deployCommand = userConfigCmd+' project deploy start ';
-const retrieveCommand = userConfigCmd+' project retrieve start ';
+const deployCommand = userConfigCmd +' project deploy start ';
+const retrieveCommand = userConfigCmd +' project retrieve start ';
+const RUN_APEX_TEST_CMD = userConfigCmd +' apex test run ';
 
 let sfTerminal;
 let lwcLibraryHomeUrl = 'https://developer.salesforce.com/docs/component-library/overview/components';
@@ -530,6 +531,119 @@ async function retrieveFolder (cancelToken, folderPath){
     return myPromise;
 }
 
+async function runApexTestClass(cancelToken){
+    var isFileOpen = window.activeTextEditor;
+
+    let cancelOperation = false;
+    var myPromise = new Promise(async resolve => {
+        cancelToken.onCancellationRequested(() => {
+			cancelOperation = true;
+			return resolve(false);
+		});
+        try{
+            // check if the text editor is open or not
+            if(isFileOpen){
+                // get current file full path
+                let currentFilePath = window.activeTextEditor.document.fileName;
+                
+                // check if the current file path is force-app 
+                if(currentFilePath && vscode.workspace.name){
+                    // build relative file path
+                    let methodName = util.getSelectedText(); // if user wants to run a single method
+                    let className = path.basename(currentFilePath).split('.')[0];
+                    window.showErrorMessage(className);
+
+                    let clsOrMethodName = methodName != undefined ? className+'.'+methodName : className;
+                    let clsOrMethodFlag = methodName != undefined ? '--tests ' : '-n ';
+                    let terminalCommand = RUN_APEX_TEST_CMD + clsOrMethodFlag +clsOrMethodName+' -c -r json --synchronous';
+                    
+                    //executeCommandInTerminal(terminalCommand);
+                    if(!cancelOperation && terminalCommand){                        
+                        await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                            processApexTestResults(cmdResult).then(function(){
+                                return resolve(true);
+                            });
+                         });
+                    }else{
+                        window.showErrorMessage(labels.cancelExecution);
+                        return resolve(false);
+                    }
+                }
+                else{
+                    window.showErrorMessage(labels.errorFileNotSupport);
+                    return resolve(true);
+                }
+            }
+            // if text editor not open, the show error message
+            else{
+                // Display a message box to the user
+                window.showErrorMessage(labels.errorOpenFile);
+                return resolve(true);
+            }
+        }catch(error){
+            console.log(labels.logErrorMsg, error);
+            return resolve(false);
+        }
+    });
+    return myPromise;
+}
+
+async function processApexTestResults(cmdResult){
+    return new Promise(resolve =>{
+        let uncoveredLines = []; 
+        if( cmdResult.result.summary.outcome == 'Failed'){
+            window.showErrorMessage('Test class Failed, Check errors');
+            outputChannel.appendLine('');// add line break
+            outputChannel.appendLine('========== Test Results ======');
+            outputChannel.appendLine('Result: '+cmdResult.result.summary.outcome);
+            outputChannel.appendLine('Test Coverage: '+ cmdResult.result.summary.testRunCoverage);
+            outputChannel.appendLine('No of Test methods failed : '+ cmdResult.result.summary.failing);
+            outputChannel.appendLine('No of lines covered : '+ cmdResult.result.coverage.coverage[0].totalCovered);
+            outputChannel.appendLine('Total lines : '+ cmdResult.result.coverage.coverage[0].totalLines);
+            Object.entries(cmdResult.result.coverage.coverage[0].lines).forEach(([key, value]) => {
+                if(!value){
+                    uncoveredLines.push(key);
+                }
+              });
+            outputChannel.appendLine('Uncovered lines : '+ uncoveredLines.toString());
+            outputChannel.appendLine('=== Test Methods status');
+
+            cmdResult.result.tests.forEach(record => {
+                if(record.Outcome == 'Fail'){
+                    outputChannel.appendLine(record.MethodName+'    '+record.Outcome+'   '+record.StackTrace);
+                    outputChannel.appendLine('                                      '+record.Message);
+                }else{
+                    outputChannel.appendLine(record.MethodName+' '+record.Outcome);
+                }
+            });
+            outputChannel.show();	
+            return resolve(true);
+        }else if(cmdResult.result.summary.outcome == 'Passed'){
+            window.showInformationMessage('Test class passed successfully');
+            outputChannel.appendLine('');// add line break
+            outputChannel.appendLine('========== Test Results ======');
+            outputChannel.appendLine('Result: '+cmdResult.result.summary.outcome);
+            outputChannel.appendLine('Test Coverage: '+ cmdResult.result.summary.testRunCoverage);
+            outputChannel.appendLine('No of lines covered : '+ cmdResult.result.coverage.summary.coveredLines);
+            outputChannel.appendLine('Total lines : '+ cmdResult.result.coverage.summary.totalLines);
+            outputChannel.appendLine('Class Name : '+ cmdResult.result.coverage.coverage[0].name);
+            Object.entries(cmdResult.result.coverage.coverage[0].lines).forEach(([key, value]) => {
+                if(!value){
+                    uncoveredLines.push(key);
+                }
+              });
+            outputChannel.appendLine('Uncovered lines : '+ uncoveredLines.toString());
+            outputChannel.appendLine('=== Test Methods status');
+
+            cmdResult.result.tests.forEach(record => {
+                outputChannel.appendLine(record.MethodName+' '+record.Outcome);
+            });
+            outputChannel.show();
+            return resolve(true);
+        }
+    });
+}
+
 module.exports = {
     deploy,
     retrieve,
@@ -537,5 +651,6 @@ module.exports = {
     openLwcLibrary,
     openCurrentFileInOrg,
     deployFolder,
-    retrieveFolder
+    retrieveFolder,
+    runApexTestClass
 };

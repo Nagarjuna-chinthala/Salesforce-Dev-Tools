@@ -39,7 +39,8 @@
     "onCommand:sfdevtools.openLwcLibrary",
     "onCommand:sfdevtools.openMetadataInOrg",
     "onCommand:sfdevtools.deployFolder",
-    "onCommand:sfdevtools.retrieveFolder"
+    "onCommand:sfdevtools.retrieveFolder",
+    "onCommand:sfdevtools.runApexTestClass"
 
   ],
   "main": "./extension.js",
@@ -88,6 +89,10 @@
         {
             "command": "sfdevtools.retrieveFolder",
             "title": "SDT: Retrieve Folder"
+        },
+        {
+            "command": "sfdevtools.runApexTestClass",
+            "title": "SDT: Run Current Test class"
         }
     ],
     "menus": {
@@ -111,6 +116,11 @@
                 "when": "(config.salesforceDevTools.editor.hideOpenInOrgMenu == false && (editorLangId == xml || resourceExtname == .cls || resourceExtname == .trigger))",
                 "command": "sfdevtools.openMetadataInOrg",
                 "group": "SDT@3"
+            },
+            {
+                "when": "config.salesforceDevTools.editor.hideRunApexTest == false && resourceExtname == .cls ",
+                "command": "sfdevtools.runApexTestClass",
+                "group": "SDT@1"
             }
         ],
         "explorer/context": [
@@ -189,6 +199,12 @@
                     "enum": ["sfdx", "sf"],
                     "default": "sfdx",
                     "markdownDescription": "Choose which salesforce command to use deploy/ retrieve.",
+                    "scope": "Content"
+                },
+                "salesforceDevTools.editor.hideRunApexTest": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Enable/Disable Editor rigth click Run Apex Test Class",
                     "scope": "Content"
                 }
             }

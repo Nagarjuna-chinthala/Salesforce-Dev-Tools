@@ -82,6 +82,17 @@ function activate(context) {
 			});
     });
 
+	// Deploy file command
+	let runApexTestDisposable = vscode.commands.registerCommand('sfdevtools.runApexTestClass', function () {
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "Running Apex Test Execution...",
+			cancellable: true
+			},async (progress, cancelToken) => {
+				return await orgDeployRetrieve.runApexTestClass(cancelToken);
+			});
+	});
+
     // change workspace color
     let changeWorkspaceColor = vscode.commands.registerCommand('sfdevtools.changeWorkspaceColor', function () {
 		orgWorkspaceColor.changeWorkspaceColor();
@@ -161,7 +172,8 @@ function activate(context) {
 		openLwcLibrary,
 		openMetadataInOrg,
 		deployFolderToOrg,
-		retrieveFolderFromOrg
+		retrieveFolderFromOrg,
+		runApexTestDisposable
 	);
 }
 
