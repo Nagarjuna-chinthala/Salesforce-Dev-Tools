@@ -73,3 +73,7 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.8.1] - 24-01-2024
 - now support older vs code versions
+
+## [0.9.0] - 28-01-2024
+- New feature: Now run Test classes and test methods from vs code.
+- minor bug fixes

@@ -22,3 +22,4 @@ Salesforce doesn't provide right click menu to show deploy/retrieve for scratch 
 7. JSON Formatter & Validator
 8. Retrieve Metadata form org
 9. Open Metadata in org from vs code. Supported metadata types: Standard and Custom Objects,ApexClass,ApexTrigger,Profile, PermissionSet,StaticResource,Flow,FlexiPage,GlobalValueSet
+10. Now run Test classes and test methods from vs code.

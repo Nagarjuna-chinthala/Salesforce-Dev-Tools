@@ -11,7 +11,7 @@ const { resourceLimits } = require('worker_threads');
 const packageFile = 'manifest';
 const layoutFile = 'layouts';
 
-const userConfigCmd = vscode.workspace.getConfiguration().get('salesforceDevTools.editor.salesforceCommandToUse');
+const userConfigCmd = vscode.workspace.getConfiguration().get('salesforceDevTools.salesforceCommandToUse');
 const orgOpenCommand = userConfigCmd +' org open --json -p';
 const soqlQueryCommand = userConfigCmd +' data query --json -t -q ';
 const cmdFlag = '--json -c -d ';
@@ -551,7 +551,6 @@ async function runApexTestClass(cancelToken){
                     // build relative file path
                     let methodName = util.getSelectedText(); // if user wants to run a single method
                     let className = path.basename(currentFilePath).split('.')[0];
-                    window.showErrorMessage(className);
 
                     let clsOrMethodName = methodName != undefined ? className+'.'+methodName : className;
                     let clsOrMethodFlag = methodName != undefined ? '--tests ' : '-n ';
@@ -595,48 +594,55 @@ async function processApexTestResults(cmdResult){
             window.showErrorMessage('Test class Failed, Check errors');
             outputChannel.appendLine('');// add line break
             outputChannel.appendLine('========== Test Results ======');
-            outputChannel.appendLine('Result: '+cmdResult.result.summary.outcome);
-            outputChannel.appendLine('Test Coverage: '+ cmdResult.result.summary.testRunCoverage);
-            outputChannel.appendLine('No of Test methods failed : '+ cmdResult.result.summary.failing);
-            outputChannel.appendLine('No of lines covered : '+ cmdResult.result.coverage.coverage[0].totalCovered);
-            outputChannel.appendLine('Total lines : '+ cmdResult.result.coverage.coverage[0].totalLines);
+            outputChannel.appendLine('Result:                      '+cmdResult.result.summary.outcome);
+            outputChannel.appendLine('Test Coverage:               '+ cmdResult.result.summary.testRunCoverage);
+            outputChannel.appendLine('No of Test methods failed:   '+ cmdResult.result.summary.failing);
+            outputChannel.appendLine('No of lines covered:         '+ cmdResult.result.coverage.coverage[0].totalCovered);
+            outputChannel.appendLine('Total lines:                 '+ cmdResult.result.coverage.coverage[0].totalLines);
             Object.entries(cmdResult.result.coverage.coverage[0].lines).forEach(([key, value]) => {
                 if(!value){
                     uncoveredLines.push(key);
                 }
               });
-            outputChannel.appendLine('Uncovered lines : '+ uncoveredLines.toString());
+            outputChannel.appendLine('Uncovered lines:             '+ uncoveredLines.toString());
+            outputChannel.appendLine('');// add line break
             outputChannel.appendLine('=== Test Methods status');
 
+            outputChannel.appendLine('Method Name                   Result           Errors');
+            outputChannel.appendLine('___________                   ________         _______');
             cmdResult.result.tests.forEach(record => {
                 if(record.Outcome == 'Fail'){
-                    outputChannel.appendLine(record.MethodName+'    '+record.Outcome+'   '+record.StackTrace);
-                    outputChannel.appendLine('                                      '+record.Message);
+                    outputChannel.appendLine(record.MethodName+'          '+record.Outcome+'  '+record.StackTrace);
+                    outputChannel.appendLine('                                                '+record.Message);
                 }else{
-                    outputChannel.appendLine(record.MethodName+' '+record.Outcome);
+                    outputChannel.appendLine(record.MethodName+'          '+record.Outcome);
                 }
             });
-            outputChannel.show();	
+            outputChannel.show();
+
             return resolve(true);
         }else if(cmdResult.result.summary.outcome == 'Passed'){
             window.showInformationMessage('Test class passed successfully');
             outputChannel.appendLine('');// add line break
             outputChannel.appendLine('========== Test Results ======');
-            outputChannel.appendLine('Result: '+cmdResult.result.summary.outcome);
-            outputChannel.appendLine('Test Coverage: '+ cmdResult.result.summary.testRunCoverage);
-            outputChannel.appendLine('No of lines covered : '+ cmdResult.result.coverage.summary.coveredLines);
-            outputChannel.appendLine('Total lines : '+ cmdResult.result.coverage.summary.totalLines);
-            outputChannel.appendLine('Class Name : '+ cmdResult.result.coverage.coverage[0].name);
+            outputChannel.appendLine('Result:                '+cmdResult.result.summary.outcome);
+            outputChannel.appendLine('Test Coverage:         '+ cmdResult.result.summary.testRunCoverage);
+            outputChannel.appendLine('No of lines covered:   '+ cmdResult.result.coverage.summary.coveredLines);
+            outputChannel.appendLine('Total lines:           '+ cmdResult.result.coverage.summary.totalLines);
+            outputChannel.appendLine('Class Name:            '+ cmdResult.result.coverage.coverage[0].name);
             Object.entries(cmdResult.result.coverage.coverage[0].lines).forEach(([key, value]) => {
                 if(!value){
                     uncoveredLines.push(key);
                 }
               });
-            outputChannel.appendLine('Uncovered lines : '+ uncoveredLines.toString());
-            outputChannel.appendLine('=== Test Methods status');
+            outputChannel.appendLine('Uncovered lines:       '+ uncoveredLines.toString());
 
+            outputChannel.appendLine('');// add line break
+            outputChannel.appendLine('=== Test Methods status');
+            outputChannel.appendLine('Method Name                   Result                   Errors');
+            outputChannel.appendLine('___________                   ______                   _______');
             cmdResult.result.tests.forEach(record => {
-                outputChannel.appendLine(record.MethodName+' '+record.Outcome);
+                outputChannel.appendLine(record.MethodName+'      '+record.Outcome);
             });
             outputChannel.show();
             return resolve(true);
