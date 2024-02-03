@@ -158,14 +158,24 @@ async function processResultsOnDeploy(cmdResult){
         if( cmdResult.status !== 0){
             window.showErrorMessage(labels.deployErrorMsg);
             outputChannel.appendLine('');// add line break
-            outputChannel.appendLine(labels.outputChannelErrorL1);
+            outputChannel.appendLine(labels.opcDeployFailed);
+            outputChannel.appendLine('');// add line break
             if(cmdResult.result){
-                outputChannel.appendLine(labels.outputChannelErrorL2);
-                outputChannel.appendLine(labels.outputChannelErrorL3);
+                let resultSummary = { col1: ["File Type", "------------"], col2: ["File Name", "---------"], col3: ["Errors", "---------"]};
                 cmdResult.result.files.forEach(myError => {
-                    outputChannel.appendLine(myError.type+':'+myError.fullName+'  '+myError.error);
+                    resultSummary.col1.push(myError.type);
+                    resultSummary.col2.push(myError.fullName);
+                    resultSummary.col3.push(myError.error);
+                    
                 });
-                outputChannel.appendLine(labels.completedExecution+cmdResult.result.completedDate);
+                formatResultsData(resultSummary).then(function(formattedResults){
+                    for(let i=0; i<resultSummary.col1.length; i++){
+                        outputChannel.appendLine(formattedResults.col1[i]+'  '+formattedResults.col2[i]+'  '+formattedResults.col3[i]);
+                    }
+                    outputChannel.appendLine('');// add line break
+                    outputChannel.appendLine(labels.completedExecution+cmdResult.result.completedDate);
+                });
+                
             }else if(cmdResult.message){
                 outputChannel.appendLine(cmdResult.message);
             }else{
@@ -176,18 +186,27 @@ async function processResultsOnDeploy(cmdResult){
         }else if(cmdResult.status == 0){
             window.showInformationMessage(labels.deploySuccessMsg);
             outputChannel.appendLine('');// add line break
-            outputChannel.appendLine(labels.outputChannelSuccessL1);
-            outputChannel.appendLine(labels.outputChannelSuccessL2);
-            outputChannel.appendLine(labels.outputChannelSuccessL3);
+            outputChannel.appendLine(labels.opcDeploySuccess);
+            outputChannel.appendLine('');// add line break
             
             if(cmdResult.result){
+                let resultSummary = { col1: ["File Type", "------------"], col2: ["File Name", "---------"]};
                 cmdResult.result.details.componentSuccesses.forEach(result => {
                     if(result.componentType){
-                        outputChannel.appendLine(result.componentType+':'+result.fullName);
+                        resultSummary.col1.push(result.componentType);
+                        resultSummary.col2.push(result.fullName);
                     }
                 });
+
+                formatResultsData(resultSummary).then(function(formattedResults){
+                    for(let i=0; i<resultSummary.col1.length; i++){
+                        outputChannel.appendLine(formattedResults.col1[i]+'  '+formattedResults.col2[i]);
+                    }
+                    outputChannel.appendLine('');// add line break
+                    outputChannel.appendLine(labels.completedExecution+cmdResult.result.completedDate);
+                });
             }
-            outputChannel.appendLine(labels.completedExecution+cmdResult.result.completedDate);
+            
             return resolve(true);
         }
     });
@@ -195,13 +214,13 @@ async function processResultsOnDeploy(cmdResult){
 
 async function processResultsOnRetrieve(cmdResult){
     return new Promise(resolve =>{
+        window.showErrorMessage(labels.retrieveErrorMsg);
         // if its failed, handle errors 
         if( cmdResult.status != 0){
-            window.showErrorMessage(labels.retrieveErrorMsg);
             outputChannel.appendLine('');// add line break
-            outputChannel.appendLine(labels.outputChannelErrorL1);
-            outputChannel.appendLine(labels.outputChannelSuccessL2);
-            outputChannel.appendLine(labels.outputChannelSuccessL3);
+            outputChannel.appendLine(labels.opcRetrieveFailed);
+            outputChannel.appendLine('');// add line break
+
             if(cmdResult.message){
                 outputChannel.appendLine('ERROR: '+cmdResult.message);
             }else{
@@ -213,11 +232,9 @@ async function processResultsOnRetrieve(cmdResult){
         else{
             // partila success, we consider as a error
             if(cmdResult.result.messages.length){
-                window.showErrorMessage(labels.retrieveErrorMsg);
                 outputChannel.appendLine('');// add line break
-                outputChannel.appendLine(labels.outputChannelErrorL1);
-                outputChannel.appendLine(labels.outputChannelSuccessL2);
-                outputChannel.appendLine(labels.outputChannelSuccessL3);
+                outputChannel.appendLine(labels.opcRetrieveFailed);
+                outputChannel.appendLine('');// add line break
                 if(cmdResult.result.messages){
                     cmdResult.result.messages.forEach(result => {
                         outputChannel.appendLine('ERROR: '+ result.problem);
@@ -227,17 +244,24 @@ async function processResultsOnRetrieve(cmdResult){
             }else{
                 window.showInformationMessage(labels.retrieveSuccessMsg);
                 outputChannel.appendLine('');// add line break
-                outputChannel.appendLine(labels.outputChannelSuccessL1);
-                outputChannel.appendLine(labels.outputChannelSuccessL2);
-                outputChannel.appendLine(labels.outputChannelSuccessL3);
-               
+                outputChannel.appendLine(labels.opcRetrieveSuccess);
+                outputChannel.appendLine('');// add line break
+                let resultSummary = { col1: ["File Type", "------------"], col2: ["File Name", "---------"], col3: ["Last Modified By Name", "-----------------------"], col4: ["Last Modified Date", "---------------------"]};
                 if(cmdResult.result){
                     cmdResult.result.fileProperties.forEach(result => {
                         if(result.id){
-                            outputChannel.appendLine(result.type+':'+result.fullName);
+                            resultSummary.col1.push(result.type);
+                            resultSummary.col2.push(result.fullName);
+                            resultSummary.col3.push(result.lastModifiedByName);
+                            resultSummary.col4.push(result.lastModifiedDate);
                         }
                     });
                 }
+                formatResultsData(resultSummary).then(function(formattedResults){
+                    for(let i=0; i<resultSummary.col1.length; i++){
+                        outputChannel.appendLine(formattedResults.col1[i]+'  '+formattedResults.col2[i]+'  '+formattedResults.col3[i]+'  '+formattedResults.col4[i]);
+                    }
+                });
             }
             
             return resolve(true);
@@ -559,7 +583,7 @@ async function runApexTestClass(cancelToken){
                     //executeCommandInTerminal(terminalCommand);
                     if(!cancelOperation && terminalCommand){                        
                         await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                            processApexTestResults(cmdResult).then(function(){
+                            processApexTestResults(cmdResult).then(function(something){
                                 return resolve(true);
                             });
                          });
@@ -591,9 +615,9 @@ async function processApexTestResults(cmdResult){
     return new Promise(resolve =>{
         let uncoveredLines = []; 
         if( cmdResult.result.summary.outcome == 'Failed'){
-            window.showErrorMessage('Test class Failed, Check errors');
+            window.showErrorMessage(labels.semTestClassFailed);
             outputChannel.appendLine('');// add line break
-            outputChannel.appendLine('========== Test Results ======');
+            outputChannel.appendLine(labels.opcTestResults);
             outputChannel.appendLine('Result:                      '+cmdResult.result.summary.outcome);
             outputChannel.appendLine('Test Coverage:               '+ cmdResult.result.summary.testRunCoverage);
             outputChannel.appendLine('No of Test methods failed:   '+ cmdResult.result.summary.failing);
@@ -606,48 +630,78 @@ async function processApexTestResults(cmdResult){
               });
             outputChannel.appendLine('Uncovered lines:             '+ uncoveredLines.toString());
             outputChannel.appendLine('');// add line break
-            outputChannel.appendLine('=== Test Methods status');
 
-            outputChannel.appendLine('Method Name                   Result           Errors');
-            outputChannel.appendLine('___________                   ________         _______');
+            let resultSummary = { col1: ["Method Name", "------------"], col2: ["Result", "---------"], col3: ["Errors", "---------"]};
             cmdResult.result.tests.forEach(record => {
                 if(record.Outcome == 'Fail'){
-                    outputChannel.appendLine(record.MethodName+'          '+record.Outcome+'  '+record.StackTrace);
-                    outputChannel.appendLine('                                                '+record.Message);
+                    resultSummary.col1.push(record.MethodName);
+                    resultSummary.col2.push(record.Outcome);
+                    resultSummary.col3.push(record.StackTrace);
+
+                    resultSummary.col1.push("   ");
+                    resultSummary.col2.push("   ");
+                    resultSummary.col3.push(record.Message);
                 }else{
-                    outputChannel.appendLine(record.MethodName+'          '+record.Outcome);
+                    resultSummary.col1.push(record.MethodName);
+                    resultSummary.col2.push(record.Outcome);
+                    resultSummary.col3.push("   ");
+                }
+            });
+            formatResultsData(resultSummary).then(function(formattedResults){
+                for(let i=0; i<resultSummary.col1.length; i++){
+                    outputChannel.appendLine(formattedResults.col1[i]+'  '+formattedResults.col2[i]+'  '+formattedResults.col3[i]);
                 }
             });
             outputChannel.show();
-
             return resolve(true);
         }else if(cmdResult.result.summary.outcome == 'Passed'){
-            window.showInformationMessage('Test class passed successfully');
-            outputChannel.appendLine('');// add line break
-            outputChannel.appendLine('========== Test Results ======');
-            outputChannel.appendLine('Result:                '+cmdResult.result.summary.outcome);
-            outputChannel.appendLine('Test Coverage:         '+ cmdResult.result.summary.testRunCoverage);
-            outputChannel.appendLine('No of lines covered:   '+ cmdResult.result.coverage.summary.coveredLines);
-            outputChannel.appendLine('Total lines:           '+ cmdResult.result.coverage.summary.totalLines);
-            outputChannel.appendLine('Class Name:            '+ cmdResult.result.coverage.coverage[0].name);
-            Object.entries(cmdResult.result.coverage.coverage[0].lines).forEach(([key, value]) => {
-                if(!value){
-                    uncoveredLines.push(key);
-                }
-              });
-            outputChannel.appendLine('Uncovered lines:       '+ uncoveredLines.toString());
-
-            outputChannel.appendLine('');// add line break
-            outputChannel.appendLine('=== Test Methods status');
-            outputChannel.appendLine('Method Name                   Result                   Errors');
-            outputChannel.appendLine('___________                   ______                   _______');
-            cmdResult.result.tests.forEach(record => {
-                outputChannel.appendLine(record.MethodName+'      '+record.Outcome);
-            });
-            outputChannel.show();
-            return resolve(true);
+            if(cmdResult.result.tests.length){
+                window.showInformationMessage(labels.simTestClassPassed);
+                outputChannel.appendLine('');// add line break
+                outputChannel.appendLine(labels.opcTestResults);
+                outputChannel.appendLine('Result:                '+cmdResult.result.summary.outcome);
+                outputChannel.appendLine('Test Coverage:         '+ cmdResult.result.summary.testRunCoverage);
+                outputChannel.appendLine('No of lines covered:   '+ cmdResult.result.coverage.summary.coveredLines);
+                outputChannel.appendLine('Total lines:           '+ cmdResult.result.coverage.summary.totalLines);
+                outputChannel.appendLine('Class Name:            '+ cmdResult.result.coverage.coverage[0].name);
+                Object.entries(cmdResult.result.coverage.coverage[0].lines).forEach(([key, value]) => {
+                    if(!value){
+                        uncoveredLines.push(key);
+                    }
+                  });
+                outputChannel.appendLine('Uncovered lines:       '+ uncoveredLines.toString());
+    
+                outputChannel.appendLine('');// add line break
+                let resultSummary = { col1: ["Method Name", "------------"], col2: ["Result", "---------"]};
+                cmdResult.result.tests.forEach(record => {
+                    resultSummary.col1.push(record.MethodName);
+                    resultSummary.col2.push(record.Outcome);
+                });
+    
+                formatResultsData(resultSummary).then(function(formattedResults){
+                    for(let i=0; i<resultSummary.col1.length; i++){
+                        outputChannel.appendLine(formattedResults.col1[i]+'  '+formattedResults.col2[i]);
+                    }
+                });
+                outputChannel.show();
+                return resolve(true);
+            }else{
+                window.showErrorMessage(labels.semNotValidTestClass);
+                return resolve(true);
+            }
         }
     });
+}
+
+async function formatResultsData(results){
+    return new Promise(resolve =>{
+        for (const [key, value] of Object.entries(results)) {
+            let stringLen = value.reduce((a, b) => a.length <= b.length ? b : a).length + 3;
+            const newArr = value.map((string) => string+' '.repeat(stringLen - string.length));
+            results[key] = newArr;
+        }
+        return resolve(results);
+    })
 }
 
 module.exports = {
