@@ -161,12 +161,12 @@ async function processResultsOnDeploy(cmdResult){
             outputChannel.appendLine(labels.opcDeployFailed);
             outputChannel.appendLine('');// add line break
             if(cmdResult.result){
-                let resultSummary = { col1: ["File Type", "------------"], col2: ["File Name", "---------"], col3: ["Errors", "---------"]};
+                let resultSummary = { col1: ["File Type", "---------"], col2: ["File Name", "---------"], col3: ["Errors", "------"]};
                 cmdResult.result.files.forEach(myError => {
                     resultSummary.col1.push(myError.type);
                     resultSummary.col2.push(myError.fullName);
-                    resultSummary.col3.push(myError.error);
-                    
+                    let compError = myError.state =="Failed" ? myError.error : ' ';
+                    resultSummary.col3.push(compError);
                 });
                 formatResultsData(resultSummary).then(function(formattedResults){
                     for(let i=0; i<resultSummary.col1.length; i++){
@@ -190,7 +190,7 @@ async function processResultsOnDeploy(cmdResult){
             outputChannel.appendLine('');// add line break
             
             if(cmdResult.result){
-                let resultSummary = { col1: ["File Type", "------------"], col2: ["File Name", "---------"]};
+                let resultSummary = { col1: ["File Type", "---------"], col2: ["File Name", "---------"]};
                 cmdResult.result.details.componentSuccesses.forEach(result => {
                     if(result.componentType){
                         resultSummary.col1.push(result.componentType);
@@ -246,7 +246,7 @@ async function processResultsOnRetrieve(cmdResult){
                 outputChannel.appendLine('');// add line break
                 outputChannel.appendLine(labels.opcRetrieveSuccess);
                 outputChannel.appendLine('');// add line break
-                let resultSummary = { col1: ["File Type", "------------"], col2: ["File Name", "---------"], col3: ["Last Modified By Name", "-----------------------"], col4: ["Last Modified Date", "---------------------"]};
+                let resultSummary = { col1: ["File Type", "---------"], col2: ["File Name", "---------"], col3: ["Last Modified By Name", "---------------------"], col4: ["Last Modified Date", "------------------"]};
                 if(cmdResult.result){
                     cmdResult.result.fileProperties.forEach(result => {
                         if(result.id){
@@ -630,7 +630,7 @@ async function processApexTestResults(cmdResult){
             outputChannel.appendLine('Uncovered lines:             '+ uncoveredLines.toString());
             outputChannel.appendLine('');// add line break
 
-            let resultSummary = { col1: ["Method Name", "------------"], col2: ["Result", "---------"], col3: ["Errors", "---------"]};
+            let resultSummary = { col1: ["Method Name", "-----------"], col2: ["Result", "------"], col3: ["Errors", "------"]};
             cmdResult.result.tests.forEach(record => {
                 if(record.Outcome == 'Fail'){
                     resultSummary.col1.push(record.MethodName);
@@ -671,7 +671,7 @@ async function processApexTestResults(cmdResult){
                 outputChannel.appendLine('Uncovered lines:       '+ uncoveredLines.toString());
     
                 outputChannel.appendLine('');// add line break
-                let resultSummary = { col1: ["Method Name", "------------"], col2: ["Result", "---------"]};
+                let resultSummary = { col1: ["Method Name", "-----------"], col2: ["Result", "------"]};
                 cmdResult.result.tests.forEach(record => {
                     resultSummary.col1.push(record.MethodName);
                     resultSummary.col2.push(record.Outcome);
@@ -695,7 +695,7 @@ async function processApexTestResults(cmdResult){
 async function formatResultsData(results){
     return new Promise(resolve =>{
         for (const [key, value] of Object.entries(results)) {
-            let stringLen = value.reduce((a, b) => a.length <= b.length ? b : a).length + 3;
+            let stringLen = value.reduce((a, b) => a.length <= b.length ? b : a).length + 2;
             const newArr = value.map((string) => string+' '.repeat(stringLen - string.length));
             results[key] = newArr;
         }

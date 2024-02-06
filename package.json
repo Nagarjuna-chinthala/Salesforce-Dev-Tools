@@ -2,7 +2,7 @@
   "name": "sfdevtools",
   "displayName": "Salesforce Dev Tools",
   "description": "Some useful handy tools for salesforce developers.",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "MIT",
   "publisher": "Nagarjuna",
   "repository": {

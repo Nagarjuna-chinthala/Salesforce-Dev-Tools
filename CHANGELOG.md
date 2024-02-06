@@ -80,3 +80,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.9.1] - 04-02-2024
 - formatter results for output panel 
+
+## [0.9.2] - 04-02-2024
+- output format changed to logs are more meaningful  
