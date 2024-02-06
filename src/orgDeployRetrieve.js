@@ -214,9 +214,9 @@ async function processResultsOnDeploy(cmdResult){
 
 async function processResultsOnRetrieve(cmdResult){
     return new Promise(resolve =>{
-        window.showErrorMessage(labels.retrieveErrorMsg);
         // if its failed, handle errors 
         if( cmdResult.status != 0){
+            window.showErrorMessage(labels.retrieveErrorMsg);
             outputChannel.appendLine('');// add line break
             outputChannel.appendLine(labels.opcRetrieveFailed);
             outputChannel.appendLine('');// add line break
@@ -487,7 +487,6 @@ async function deployFolder(cancelToken, folderPath){
                 let projectName = vscode.workspace.name;
                 let relativePath = folderPath.split(projectName)[1].slice(1);
                 let terminalCommand = deployCommand + cmdFlag + relativePath;
-                window.showErrorMessage(terminalCommand);
 
                 if(!cancelOperation && terminalCommand){
                     await runCommandInTerminal(terminalCommand).then(function(cmdResult){
