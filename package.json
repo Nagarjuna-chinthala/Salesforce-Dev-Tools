@@ -2,7 +2,7 @@
   "name": "sfdevtools",
   "displayName": "Salesforce Dev Tools",
   "description": "Some useful handy tools for salesforce developers.",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "license": "MIT",
   "publisher": "Nagarjuna",
   "repository": {
@@ -170,16 +170,16 @@
         {
             "title": "Salesforce Dev Tools",
             "properties": {
-                "salesforceDevTools.editor.hideDeployMenu": {
-                    "type": "boolean",
-                    "default": false,
-                    "markdownDescription": "Enable/Disable Editor rigth click deploy/retrieve options",
-                    "scope": "Content"
-                },
                 "salesforceDevTools.explorer.hideFolderDeployMenu": {
                     "type": "boolean",
                     "default": false,
                     "markdownDescription": "Enable/Disable Explorer Folder rigth click deploy/retrieve options",
+                    "scope": "Content"
+                },
+                "salesforceDevTools.editor.hideDeployMenu": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Enable/Disable Editor rigth click deploy/retrieve options",
                     "scope": "Content"
                 },
                 "salesforceDevTools.editor.hideOpenLwcLibrary": {
@@ -194,6 +194,12 @@
                     "markdownDescription": "Enable/Disable Editor rigth click Open Current File in Org option",
                     "scope": "Content"
                 },
+                "salesforceDevTools.editor.hideRunApexTest": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Enable/Disable Editor rigth click Run Apex Test Class",
+                    "scope": "Content"
+                },
                 "salesforceDevTools.salesforceCommandToUse": {
                     "type": "string",
                     "enum": ["sfdx", "sf"],
@@ -201,10 +207,11 @@
                     "markdownDescription": "Choose which salesforce command to use deploy/ retrieve.",
                     "scope": "Content"
                 },
-                "salesforceDevTools.editor.hideRunApexTest": {
-                    "type": "boolean",
-                    "default": false,
-                    "markdownDescription": "Enable/Disable Editor rigth click Run Apex Test Class",
+                "salesforceDevTools.sfCommandOutputFormat": {
+                    "type": "string",
+                    "enum": ["Progress View", "Terminal View"],
+                    "default": "Progress View",
+                    "markdownDescription": "Choose which output format to use for deploy/ retrieve.",
                     "scope": "Content"
                 }
             }

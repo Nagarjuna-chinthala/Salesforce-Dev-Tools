@@ -83,3 +83,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.9.2] - 04-02-2024
 - output format changed to logs are more meaningful  
+
+## [0.9.3] - 10-02-2024
+- added options to select terminal or progress view for output

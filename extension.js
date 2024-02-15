@@ -18,24 +18,22 @@ function activate(context) {
 
 	// Deploy file command
 	let deployDisposable = vscode.commands.registerCommand('sfdevtools.deployFile', function () {
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: "Deploying current file",
-			cancellable: true
-			},async (progress, cancelToken) => {
-				return await orgDeployRetrieve.deploy(cancelToken);
-			});
+		orgDeployRetrieve.deploy();
 	});
 
 	// Retrieve file command
 	let retrieveDisposable = vscode.commands.registerCommand('sfdevtools.retrieveFile', function () {
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: "Retrieving current file",
-			cancellable: true
-			},async (progress, cancelToken) => {
-				return await orgDeployRetrieve.retrieve(cancelToken);
-			});
+		orgDeployRetrieve.retrieve();
+	});
+
+	// deploy selected folder to org
+	let deployFolderToOrg = vscode.commands.registerCommand('sfdevtools.deployFolder', (contexDetails)=> {
+		orgDeployRetrieve.deployFolder(contexDetails.fsPath);
+	});
+
+	// retrieve selected folder from org
+	let retrieveFolderFromOrg = vscode.commands.registerCommand('sfdevtools.retrieveFolder', (contexDetails)=> {
+		orgDeployRetrieve.retrieveFolder(contexDetails.fsPath);
 	});
 
 	// Retrieve from org
@@ -57,28 +55,6 @@ function activate(context) {
 			cancellable: true
 			},async (progress, cancelToken) => {
 				return await orgDeployRetrieve.openCurrentFileInOrg(cancelToken);
-			});
-	});
-
-	// deploy selected folder to org
-    let deployFolderToOrg = vscode.commands.registerCommand('sfdevtools.deployFolder', (contexDetails)=> {
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: "Deploying folder",
-			cancellable: true
-			},async (progress, cancelToken) => {
-				return await orgDeployRetrieve.deployFolder(cancelToken, contexDetails.fsPath);
-			});
-    });
-
-	// deploy selected folder to org
-    let retrieveFolderFromOrg = vscode.commands.registerCommand('sfdevtools.retrieveFolder', (contexDetails)=> {
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: "Retrieve folder",
-			cancellable: true
-			},async (progress, cancelToken) => {
-				return await orgDeployRetrieve.retrieveFolder(cancelToken, contexDetails.fsPath);
 			});
     });
 

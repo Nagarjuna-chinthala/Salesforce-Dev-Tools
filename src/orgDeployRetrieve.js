@@ -12,10 +12,18 @@ const packageFile = 'manifest';
 const layoutFile = 'layouts';
 
 const userConfigCmd = vscode.workspace.getConfiguration().get('salesforceDevTools.salesforceCommandToUse');
+const userConfigFormat = vscode.workspace.getConfiguration().get('salesforceDevTools.sfCommandOutputFormat');
+
 const orgOpenCommand = userConfigCmd +' org open --json -p';
 const soqlQueryCommand = userConfigCmd +' data query --json -t -q ';
 const cmdFlag = '--json -c -d ';
+const cmdFlagForTerminal = '-d ';
 const packageCmdFlag = '--json -x ';
+const packageCmdFlagForTerminal = '-x ';
+
+const userSelectedCmdFlag = userConfigFormat =='Progress View' ? cmdFlag: cmdFlagForTerminal;
+const userSelectedCmdFlagForPkg = userConfigFormat =='Progress View' ? packageCmdFlag: packageCmdFlagForTerminal;
+
 const deployCommand = userConfigCmd +' project deploy start ';
 const retrieveCommand = userConfigCmd +' project retrieve start ';
 const RUN_APEX_TEST_CMD = userConfigCmd +' apex test run ';
@@ -25,132 +33,142 @@ let lwcLibraryHomeUrl = 'https://developer.salesforce.com/docs/component-library
 let lwcLibraryBaseUrl = 'https://developer.salesforce.com/docs/component-library/bundle/lightning-';
 const outputChannel = vscode.window.createOutputChannel('SF Dev Tools');
 
-async function deploy(cancelToken){
+function deploy(){
     var isFileOpen = window.activeTextEditor;
     let cancelOperation = false;
-    var myPromise = new Promise(async resolve => {
-        cancelToken.onCancellationRequested(() => {
-			cancelOperation = true;
-			return resolve(false);
-		});
-        try{
-            // check if the text editor is open or not
-            if(isFileOpen){
-                // get current file full path
-                let currentFilePath = window.activeTextEditor.document.fileName;
-                // check if the current file path is force-app 
-                if(currentFilePath && vscode.workspace.name){
-                    // build relative file path
-                    let projectName = vscode.workspace.name;
-                    let relativePath = currentFilePath.split(projectName)[1].slice(1);
-                    let terminalCommand; 
 
-                    // for layouts
-                    if(relativePath.includes(layoutFile)){
-                        terminalCommand = deployCommand + cmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
-                    }
-                    // for package files in manifest folder
-                    else if(relativePath.includes(packageFile)){
-                        terminalCommand = deployCommand + packageCmdFlag + relativePath;
-                    }// all other components
-                    else{
-                        terminalCommand = deployCommand + cmdFlag + relativePath;
-                    }
-                    
-                    if(!cancelOperation && terminalCommand){
-                        await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                            processResultsOnDeploy(cmdResult).then(function(){
-                                return resolve(true);
-                            });
-                         });
-                    }else{
-                        window.showErrorMessage(labels.cancelExecution);
-                        return resolve(false);
-                    }
+    try{
+        // check if the text editor is open or not
+        if(isFileOpen){
+            // get current file full path
+            let currentFilePath = window.activeTextEditor.document.fileName;
+            // check if the current file path is force-app 
+            if(currentFilePath && vscode.workspace.name){
+                // build relative file path
+                let projectName = vscode.workspace.name;
+                let relativePath = currentFilePath.split(projectName)[1].slice(1);
+                let terminalCommand; 
+
+                // for layouts
+                if(relativePath.includes(layoutFile)){
+                    terminalCommand = deployCommand + userSelectedCmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
                 }
+                // for package files in manifest folder
+                else if(relativePath.includes(packageFile)){
+                    terminalCommand = deployCommand + userSelectedCmdFlagForPkg + relativePath;
+                }// all other components
                 else{
-                    window.showErrorMessage(labels.errorFileNotSupport);
-                    return resolve(true);
+                    terminalCommand = deployCommand + userSelectedCmdFlag + relativePath;
+                }
+
+                if(userConfigFormat === 'Progress View'){
+                    vscode.window.withProgress({
+                        location: vscode.ProgressLocation.Notification,
+                        title: "Deploying current file",
+                        cancellable: true
+                        },async (progress, cancelToken) => {
+                            var myPromise = new Promise(async resolve => {
+                                cancelToken.onCancellationRequested(() => {
+                                    window.showErrorMessage(labels.cancelExecution);
+                                    cancelOperation = true;
+                                    return resolve(false);
+                                });
+                            
+                            if(!cancelOperation){
+                                await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                                    processResultsOnDeploy(cmdResult).then(function(){
+                                        return resolve(true);
+                                    });
+                                });
+                            }
+                        });
+                        return myPromise;
+                    });
+                }else if(userConfigFormat === 'Terminal View'){
+                    executeCommandInTerminal(terminalCommand);
                 }
             }
-            // if text editor not open, the show error message
             else{
-                // Display a message box to the user
-                window.showErrorMessage(labels.errorOpenFile);
-                return resolve(false);
+                window.showErrorMessage(labels.errorFileNotSupport);
             }
-        }catch(error){
-            console.log(labels.logErrorMsg, error);
-            return resolve(false);
         }
-    });
-    return myPromise;
+        // if text editor not open, the show error message
+        else{
+            // Display a message box to the user
+            window.showErrorMessage(labels.errorOpenFile);
+        }
+    }catch(error){
+        console.log(labels.logErrorMsg, error);
+    }
 }
 
-async function retrieve(cancelToken){
+function retrieve(){
     var isFileOpen = window.activeTextEditor;
-
     let cancelOperation = false;
-    var myPromise = new Promise(async resolve => {
-        cancelToken.onCancellationRequested(() => {
-			cancelOperation = true;
-			return resolve(false);
-		});
-        try{
-            // check if the text editor is open or not
-            if(isFileOpen){
-                // get current file full path
-                let currentFilePath = window.activeTextEditor.document.fileName;
-                
-                // check if the current file path is force-app 
-                if(currentFilePath && vscode.workspace.name){
-                    // build relative file path
-                    let projectName = vscode.workspace.name;
-                    let relativePath = currentFilePath.split(projectName)[1].slice(1);
-                    let terminalCommand; 
 
-                    // for layouts
-                    if(relativePath.includes(layoutFile)){
-                        terminalCommand = retrieveCommand + cmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
-                    }
-                    // for package files in manifest folder
-                    else if(relativePath.includes(packageFile)){
-                        terminalCommand = retrieveCommand+packageCmdFlag+relativePath;
-                    }// all other components
-                    else{
-                        terminalCommand = retrieveCommand + cmdFlag + relativePath;
-                    }
-                    
-                    //executeCommandInTerminal(terminalCommand);
-                    if(!cancelOperation && terminalCommand){
-                        //executeCommandInTerminal(terminalCommand);
-                        await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                            processResultsOnRetrieve(cmdResult).then(function(){
-                                return resolve(true);
-                            });
-                         });
-                    }else{
-                        window.showErrorMessage(labels.cancelExecution);
-                        return resolve(false);
-                    }
+    try{
+        // check if the text editor is open or not
+        if(isFileOpen){
+            // get current file full path
+            let currentFilePath = window.activeTextEditor.document.fileName;
+            
+            // check if the current file path is force-app 
+            if(currentFilePath && vscode.workspace.name){
+                // build relative file path
+                let projectName = vscode.workspace.name;
+                let relativePath = currentFilePath.split(projectName)[1].slice(1);
+                let terminalCommand; 
+
+                // for layouts
+                if(relativePath.includes(layoutFile)){
+                    terminalCommand = retrieveCommand + userSelectedCmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
                 }
+                // for package files in manifest folder
+                else if(relativePath.includes(packageFile)){
+                    terminalCommand = retrieveCommand+userSelectedCmdFlagForPkg+relativePath;
+                }// all other components
                 else{
-                    window.showErrorMessage(labels.errorFileNotSupport);
-                    return resolve(true);
+                    terminalCommand = retrieveCommand + userSelectedCmdFlag + relativePath;
+                }
+                if(userConfigFormat === 'Progress View'){
+                    vscode.window.withProgress({
+                        location: vscode.ProgressLocation.Notification,
+                        title: "Retrieving current file",
+                        cancellable: true
+                        },async (progress, cancelToken) => {
+                            var myPromise = new Promise(async resolve => {
+                                cancelToken.onCancellationRequested(() => {
+                                    window.showErrorMessage(labels.cancelExecution);
+                                    cancelOperation = true;
+                                    return resolve(false);
+                                });
+                            
+                            if(!cancelOperation){
+                                await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                                    processResultsOnRetrieve(cmdResult).then(function(){
+                                        return resolve(true);
+                                    });
+                                });
+                            }
+                        });
+                        return myPromise;
+                    })
+                }else if(userConfigFormat === 'Terminal View'){
+                    executeCommandInTerminal(terminalCommand);
                 }
             }
-            // if text editor not open, the show error message
             else{
-                // Display a message box to the user
-                window.showErrorMessage(labels.errorOpenFile);
-                return resolve(true);
+                window.showErrorMessage(labels.errorFileNotSupport);
             }
-        }catch(error){
-            console.log(labels.logErrorMsg, error);
-            return resolve(false);
         }
-    });
-    return myPromise;
+        // if text editor not open, the show error message
+        else{
+            // Display a message box to the user
+            window.showErrorMessage(labels.errorOpenFile);
+        }
+    }catch(error){
+        console.log(labels.logErrorMsg, error);
+    }
 }
 
 async function processResultsOnDeploy(cmdResult){
@@ -473,85 +491,96 @@ async function openCurrentFileInOrg(cancelToken){
     return myPromise;
 }
 
-async function deployFolder(cancelToken, folderPath){
+function deployFolder(folderPath){
     let cancelOperation = false;
-    var myPromise = new Promise(async resolve => {
-        cancelToken.onCancellationRequested(() => {
-			cancelOperation = true;
-			return resolve(false);
-		});
-        try{
-            // check if the current file path is force-app 
-            if(vscode.workspace.name){
-                // build relative file path
-                let projectName = vscode.workspace.name;
-                let relativePath = folderPath.split(projectName)[1].slice(1);
-                let terminalCommand = deployCommand + cmdFlag + relativePath;
 
-                if(!cancelOperation && terminalCommand){
-                    await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                        processResultsOnDeploy(cmdResult).then(function(){
-                            return resolve(true);
-                        });
-                        });
-                }else{
-                    window.showErrorMessage(labels.cancelExecution);
-                    return resolve(false);
-                }
+    try{
+        // check if the current file path is force-app 
+        if(vscode.workspace.name){
+            // build relative file path
+            let projectName = vscode.workspace.name;
+            let relativePath = folderPath.split(projectName)[1].slice(1);
+            let terminalCommand = deployCommand + userSelectedCmdFlag + relativePath;
+
+            if(userConfigFormat === 'Progress View'){
+                vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: "Deploying folder to org",
+                    cancellable: true
+                    },async (progress, cancelToken) => {
+                        var myPromise = new Promise(async resolve => {
+                            cancelToken.onCancellationRequested(() => {
+                                window.showErrorMessage(labels.cancelExecution);
+                                cancelOperation = true;
+                                return resolve(false);
+                            });
+                        
+                        if(!cancelOperation){
+                            await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                                processResultsOnDeploy(cmdResult).then(function(){
+                                    return resolve(true);
+                                });
+                            });
+                        }
+                    });
+                    return myPromise;
+                });
+            }else if(userConfigFormat === 'Terminal View'){
+                executeCommandInTerminal(terminalCommand);
             }
-            else{
-                window.showErrorMessage(labels.errorFileNotSupport);
-                return resolve(true);
-            }
-            
-        }catch(error){
-            console.log(labels.logErrorMsg, error);
-            return resolve(false);
         }
-    });
-    return myPromise;
+        else{
+            window.showErrorMessage(labels.errorFileNotSupport);
+        }
+    }catch(error){
+        console.log(labels.logErrorMsg, error);
+    }
 }
 
-async function retrieveFolder (cancelToken, folderPath){
-
+function retrieveFolder (folderPath){
     let cancelOperation = false;
-    var myPromise = new Promise(async resolve => {
-        cancelToken.onCancellationRequested(() => {
-			cancelOperation = true;
-			return resolve(false);
-		});
-        try{
-            // check if the current file path is force-app 
-            if(vscode.workspace.name){
-                // build relative file path
-                let projectName = vscode.workspace.name;
-                let relativePath = folderPath.split(projectName)[1].slice(1);
-                let terminalCommand = retrieveCommand + cmdFlag + relativePath;
-                
-                //executeCommandInTerminal(terminalCommand);
-                if(!cancelOperation && terminalCommand){
-                    //executeCommandInTerminal(terminalCommand);
-                    await runCommandInTerminal(terminalCommand).then(function(cmdResult){
-                        processResultsOnRetrieve(cmdResult).then(function(){
-                            return resolve(true);
-                        });
-                        });
-                }else{
-                    window.showErrorMessage(labels.cancelExecution);
-                    return resolve(false);
-                }
-            }
-            else{
-                window.showErrorMessage(labels.errorFileNotSupport);
-                return resolve(true);
-            }
 
-        }catch(error){
-            console.log(labels.logErrorMsg, error);
-            return resolve(false);
+    try{
+        // check if the current file path is force-app 
+        if(vscode.workspace.name){
+            // build relative file path
+            let projectName = vscode.workspace.name;
+            let relativePath = folderPath.split(projectName)[1].slice(1);
+            let terminalCommand = retrieveCommand + userSelectedCmdFlag + relativePath;
+
+            if(userConfigFormat === 'Progress View'){
+                vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: "Retrieving folder from org",
+                    cancellable: true
+                    },async (progress, cancelToken) => {
+                        var myPromise = new Promise(async resolve => {
+                            cancelToken.onCancellationRequested(() => {
+                                window.showErrorMessage(labels.cancelExecution);
+                                cancelOperation = true;
+                                return resolve(false);
+                            });
+                        
+                        if(!cancelOperation){
+                            await runCommandInTerminal(terminalCommand).then(function(cmdResult){
+                                processResultsOnRetrieve(cmdResult).then(function(){
+                                    return resolve(true);
+                                });
+                            });
+                        }
+                    });
+                    return myPromise;
+                });
+            }else if(userConfigFormat === 'Terminal View'){
+                executeCommandInTerminal(terminalCommand);
+            }
         }
-    });
-    return myPromise;
+        else{
+            window.showErrorMessage(labels.errorFileNotSupport);                
+        }
+    }catch(error){
+        console.log(labels.logErrorMsg, error);
+    }
 }
 
 async function runApexTestClass(cancelToken){
