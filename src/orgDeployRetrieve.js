@@ -46,19 +46,14 @@ function deploy(){
             if(currentFilePath && vscode.workspace.name){
                 // build relative file path
                 let projectName = vscode.workspace.name;
-                let relativePath = currentFilePath.split(projectName)[1].slice(1);
                 let terminalCommand; 
 
-                // for layouts
-                if(relativePath.includes(layoutFile)){
-                    terminalCommand = deployCommand + userSelectedCmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
-                }
                 // for package files in manifest folder
-                else if(relativePath.includes(packageFile)){
-                    terminalCommand = deployCommand + userSelectedCmdFlagForPkg + relativePath;
+                if(currentFilePath.includes(packageFile)){
+                    terminalCommand = deployCommand + userSelectedCmdFlagForPkg + '"'+currentFilePath+'"';
                 }// all other components
                 else{
-                    terminalCommand = deployCommand + userSelectedCmdFlag + relativePath;
+                    terminalCommand = deployCommand + userSelectedCmdFlag + '"'+currentFilePath+'"';
                 }
 
                 if(userConfigFormat === 'Progress View'){
@@ -114,21 +109,14 @@ function retrieve(){
             
             // check if the current file path is force-app 
             if(currentFilePath && vscode.workspace.name){
-                // build relative file path
-                let projectName = vscode.workspace.name;
-                let relativePath = currentFilePath.split(projectName)[1].slice(1);
                 let terminalCommand; 
 
-                // for layouts
-                if(relativePath.includes(layoutFile)){
-                    terminalCommand = retrieveCommand + userSelectedCmdFlag +relativePath.split(layoutFile)[0]+layoutFile+'/"'+relativePath.split(layoutFile)[1].slice(1)+'"';
-                }
                 // for package files in manifest folder
-                else if(relativePath.includes(packageFile)){
-                    terminalCommand = retrieveCommand+userSelectedCmdFlagForPkg+relativePath;
+                if(currentFilePath.includes(packageFile)){
+                    terminalCommand = retrieveCommand+userSelectedCmdFlagForPkg + '"'+currentFilePath+'"';
                 }// all other components
                 else{
-                    terminalCommand = retrieveCommand + userSelectedCmdFlag + relativePath;
+                    terminalCommand = retrieveCommand + userSelectedCmdFlag + '"'+currentFilePath+'"';
                 }
                 if(userConfigFormat === 'Progress View'){
                     vscode.window.withProgress({
@@ -178,12 +166,12 @@ async function processResultsOnDeploy(cmdResult){
             outputChannel.appendLine('');// add line break
             outputChannel.appendLine(labels.opcDeployFailed);
             outputChannel.appendLine('');// add line break
-            if(cmdResult.result){
+            if(cmdResult.result.details.componentFailures.length){
                 let resultSummary = { col1: ["File Type", "---------"], col2: ["File Name", "---------"], col3: ["Errors", "------"]};
-                cmdResult.result.files.forEach(myError => {
-                    resultSummary.col1.push(myError.type);
+                cmdResult.result.details.componentFailures.forEach(myError => {
+                    resultSummary.col1.push(myError.componentType);
                     resultSummary.col2.push(myError.fullName);
-                    let compError = myError.state =="Failed" ? myError.error : ' ';
+                    let compError = myError.success === false ? myError.problem : ' ';
                     resultSummary.col3.push(compError);
                 });
                 formatResultsData(resultSummary).then(function(formattedResults){
@@ -496,11 +484,9 @@ function deployFolder(folderPath){
 
     try{
         // check if the current file path is force-app 
-        if(vscode.workspace.name){
-            // build relative file path
-            let projectName = vscode.workspace.name;
-            let relativePath = folderPath.split(projectName)[1].slice(1);
-            let terminalCommand = deployCommand + userSelectedCmdFlag + relativePath;
+        if(vscode.workspace.name && folderPath){
+
+            let terminalCommand = deployCommand + userSelectedCmdFlag + '"'+folderPath+'"';
 
             if(userConfigFormat === 'Progress View'){
                 vscode.window.withProgress({
@@ -542,11 +528,8 @@ function retrieveFolder (folderPath){
 
     try{
         // check if the current file path is force-app 
-        if(vscode.workspace.name){
-            // build relative file path
-            let projectName = vscode.workspace.name;
-            let relativePath = folderPath.split(projectName)[1].slice(1);
-            let terminalCommand = retrieveCommand + userSelectedCmdFlag + relativePath;
+        if(vscode.workspace.name && folderPath){
+            let terminalCommand = retrieveCommand + userSelectedCmdFlag + '"'+folderPath+'"';
 
             if(userConfigFormat === 'Progress View'){
                 vscode.window.withProgress({

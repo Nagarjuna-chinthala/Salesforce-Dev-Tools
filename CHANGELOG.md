@@ -86,3 +86,6 @@ All notable changes to the "sfdevtools" extension will be documented in this fil
 
 ## [0.9.3] - 10-02-2024
 - added options to select terminal or progress view for output
+
+## [0.9.4] - 18-02-2024
+- minor bug fixes and stable error handling 
