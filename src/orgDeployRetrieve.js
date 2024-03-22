@@ -17,7 +17,7 @@ const userConfigFormat = vscode.workspace.getConfiguration().get('salesforceDevT
 const orgOpenCommand = userConfigCmd +' org open --json -p';
 const soqlQueryCommand = userConfigCmd +' data query --json -t -q ';
 const cmdFlag = '--json -c -d ';
-const cmdFlagForTerminal = '-d ';
+const cmdFlagForTerminal = '-c -d ';
 const packageCmdFlag = '--json -x ';
 const packageCmdFlagForTerminal = '-x ';
 
@@ -165,8 +165,8 @@ async function processResultsOnDeploy(cmdResult){
             window.showErrorMessage(labels.deployErrorMsg);
             outputChannel.appendLine('');// add line break
             outputChannel.appendLine(labels.opcDeployFailed);
-            outputChannel.appendLine('');// add line break
-            if(cmdResult.result.details.componentFailures.length){
+            //outputChannel.appendLine('');// add line break
+            if(cmdResult.hasOwnProperty('result') && cmdResult.result.details.componentFailures.length){
                 let resultSummary = { col1: ["File Type", "---------"], col2: ["File Name", "---------"], col3: ["Errors", "------"]};
                 cmdResult.result.details.componentFailures.forEach(myError => {
                     resultSummary.col1.push(myError.componentType);
@@ -193,7 +193,7 @@ async function processResultsOnDeploy(cmdResult){
             window.showInformationMessage(labels.deploySuccessMsg);
             outputChannel.appendLine('');// add line break
             outputChannel.appendLine(labels.opcDeploySuccess);
-            outputChannel.appendLine('');// add line break
+            //outputChannel.appendLine('');// add line break
             
             if(cmdResult.result){
                 let resultSummary = { col1: ["File Type", "---------"], col2: ["File Name", "---------"]};
@@ -225,7 +225,7 @@ async function processResultsOnRetrieve(cmdResult){
             window.showErrorMessage(labels.retrieveErrorMsg);
             outputChannel.appendLine('');// add line break
             outputChannel.appendLine(labels.opcRetrieveFailed);
-            outputChannel.appendLine('');// add line break
+            //outputChannel.appendLine('');// add line break
 
             if(cmdResult.message){
                 outputChannel.appendLine('ERROR: '+cmdResult.message);
@@ -240,7 +240,7 @@ async function processResultsOnRetrieve(cmdResult){
             if(cmdResult.result.messages.length){
                 outputChannel.appendLine('');// add line break
                 outputChannel.appendLine(labels.opcRetrieveFailed);
-                outputChannel.appendLine('');// add line break
+                //outputChannel.appendLine('');// add line break
                 if(cmdResult.result.messages){
                     cmdResult.result.messages.forEach(result => {
                         outputChannel.appendLine('ERROR: '+ result.problem);
@@ -251,7 +251,7 @@ async function processResultsOnRetrieve(cmdResult){
                 window.showInformationMessage(labels.retrieveSuccessMsg);
                 outputChannel.appendLine('');// add line break
                 outputChannel.appendLine(labels.opcRetrieveSuccess);
-                outputChannel.appendLine('');// add line break
+                //outputChannel.appendLine('');// add line break
                 let resultSummary = { col1: ["File Type", "---------"], col2: ["File Name", "---------"], col3: ["Last Modified By Name", "---------------------"], col4: ["Last Modified Date", "------------------"]};
                 if(cmdResult.result){
                     cmdResult.result.fileProperties.forEach(result => {
